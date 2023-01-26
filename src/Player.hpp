@@ -12,7 +12,7 @@ private:
 public:
 
     Player() {
-        sprite.setPosition({ 50, 300 });
+        sprite.setPosition({ 0, 500 });
         texture.loadFromFile("res/player.png");
         sprite.setTexture(texture);
     }
@@ -44,8 +44,8 @@ public:
         return false;
     }
 
-    bool collidingOnTheRight(sf::RectangleShape& rect) {
-        if(collidingOnTheTop(rect) || collidingOnTheBottom(rect)) {
+    bool leftObstacleCollision(sf::RectangleShape& rect) {
+        if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
         }
 
@@ -58,8 +58,8 @@ public:
         return false;
     }
 
-    bool collidingOnTheLeft(sf::RectangleShape& rect) {
-        if(collidingOnTheTop(rect) || collidingOnTheBottom(rect)) {
+    bool rightObstacleCollision(sf::RectangleShape& rect) {
+        if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
         }
 
@@ -72,7 +72,7 @@ public:
         return false;
     }
     
-    bool collidingOnTheTop(sf::RectangleShape& rect) {
+    bool bottomObstacleCollision(sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + sprite.getGlobalBounds().height - 1 < rect.getPosition().y) {
                 //std::cout << "ax: " << sprite.getPosition().y + sprite.getGlobalBounds().height << " b: " << rect.getPosition().y << std::endl;
@@ -82,7 +82,7 @@ public:
         return false;
     }
 
-    bool collidingOnTheBottom(sf::RectangleShape& rect) {
+    bool topObstacleCollision(sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + 1 > rect.getPosition().y + rect.getGlobalBounds().height) {
                 return true;

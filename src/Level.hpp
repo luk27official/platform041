@@ -24,22 +24,25 @@ public:
         //player.setPos({ 50, 700 });
     
         //Ground Object:
-        ground.setSize({ 1000, 100 });
+        ground.setSize({ 3000, 100 });
+        float groundY = groundHeight + 32;
         ground.setFillColor(sf::Color::Green);
-        ground.setPosition({ 0, groundHeight + 32 }); //32 is the height of the player sprite
+        ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
 
         //obstacle object:
         sf::RectangleShape obstacle;
         obstacle.setSize({ 100, 100 });
+        float obstacleY = groundHeight + 32 - 100;
         obstacle.setFillColor(sf::Color::Red);
-        obstacle.setPosition({ 300, groundHeight + 32 - 100 }); //32 is the height of the player sprite
+        obstacle.setPosition({ 300, obstacleY }); //32 is the height of the player sprite
 
         obstacleVec.push_back(obstacle);
 
         sf::RectangleShape obstacle2;
         obstacle2.setSize({ 100, 20 });
+        float obstacle2Y = groundHeight + 32 - 300;
         obstacle2.setFillColor(sf::Color::Red);
-        obstacle2.setPosition({ 500, groundHeight + 32 - 300 }); //32 is the height of the player sprite
+        obstacle2.setPosition({ 500, obstacle2Y }); //32 is the height of the player sprite
 
         obstacleVec.push_back(obstacle2);
 
@@ -54,7 +57,7 @@ public:
         coinVec.push_back(coin2);
     }
 
-    void update() {
+    void update(sf::RenderWindow& window) {
         //Coin Logic:
         for (int i = 0; i < coinVec.size(); i++) {
             Coin c = coinVec.at(i);
@@ -68,7 +71,7 @@ public:
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
             sf::RectangleShape o = obstacleVec.at(i);
-            if (player.collidingOnTheTop(o)) {
+            if (player.bottomObstacleCollision(o)) {
                 colliding = true;
                 break;
             }
@@ -86,13 +89,14 @@ public:
             colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
-                if (player.collidingOnTheLeft(o)) {
+                if (player.rightObstacleCollision(o)) {
                     colliding = true;
                     break;
                 }
             }
             if(!colliding) {
                 player.move({ moveSpeed, 0 });
+                window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
 
@@ -101,13 +105,14 @@ public:
             colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
-                if (player.collidingOnTheRight(o)) {
+                if (player.leftObstacleCollision(o)) {
                     colliding = true;
                     break;
                 }
             }
             if(!colliding && player.getX() > 0) {
                 player.move({ -moveSpeed, 0 });
+                window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
 
@@ -116,7 +121,7 @@ public:
             colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
-                if (player.collidingOnTheBottom(o)) {
+                if (player.topObstacleCollision(o)) {
                     colliding = true;
                     break;
                 }
