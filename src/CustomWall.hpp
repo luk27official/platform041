@@ -4,6 +4,7 @@
 
 enum class WallType {
     ClassicWall,
+    KillingObstacle,
     Finish
 };
 

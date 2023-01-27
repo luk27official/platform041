@@ -1,12 +1,15 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "Player.hpp"
 #include "Coin.hpp"
 #include "Enemy.hpp"
 #include "CustomWall.hpp"
 #include "ClassicWall.hpp"
 #include "Finish.hpp"
+#include "KillingObstacle.hpp"
+
 #include <vector>
 #include <memory>
 
@@ -58,6 +61,13 @@ public:
 
         obstacleVec.push_back(obstacle3);
 
+        std::shared_ptr<KillingObstacle> kill1 = std::make_shared<KillingObstacle>();
+        kill1->setSize({ 50, 20 });
+        float kill1Y = groundHeight + playerHeight - 20;
+        kill1->setPos({ 900, kill1Y }); //playerHeight is the height of the player sprite
+
+        obstacleVec.push_back(kill1);
+
         //Coin Objects:
         /*
         Coin coin1;
@@ -94,7 +104,7 @@ public:
         std::cout << "You win!" << std::endl;
     }
 
-    void handlePlayerBottomObstacleCollision(float dt) {
+    void handlePlayerBottomObstacleCollision(sf::RenderWindow& window, float dt) {
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
             sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -102,6 +112,9 @@ public:
                 switch(obstacleVec.at(i)->type) {
                     case WallType::ClassicWall:
                         colliding = true;
+                        break;
+                    case WallType::KillingObstacle:
+                        player.die(window);
                         break;
                     case WallType::Finish:
                         gameWin();
@@ -129,6 +142,9 @@ public:
                         case WallType::ClassicWall:
                             colliding = true;
                             break;
+                        case WallType::KillingObstacle:
+                            player.die(window);
+                            break;
                         case WallType::Finish:
                             gameWin();
                             break;
@@ -153,6 +169,9 @@ public:
                         case WallType::ClassicWall:
                             colliding = true;
                             break;
+                        case WallType::KillingObstacle:
+                            player.die(window);
+                            break;
                         case WallType::Finish:
                             gameWin();
                             break;
@@ -167,7 +186,7 @@ public:
         }
     }
 
-    void handlePlayerTopObstacleCollision(float dt) {
+    void handlePlayerTopObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             if(!player.isJumping) {
                 if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
@@ -185,6 +204,9 @@ public:
                     switch(obstacleVec.at(i)->type) {
                         case WallType::ClassicWall:
                             colliding = true;
+                            break;
+                        case WallType::KillingObstacle:
+                            player.die(window);
                             break;
                         case WallType::Finish:
                             gameWin();
@@ -273,13 +295,13 @@ public:
         }
         */
 
-        handlePlayerBottomObstacleCollision(dt); //gravity
+        handlePlayerBottomObstacleCollision(window, dt); //gravity
 
         handlePlayerRightObstacleCollision(window, dt);
 
         handlePlayerLeftObstacleCollision(window, dt);
 
-        handlePlayerTopObstacleCollision(dt); //jumping
+        handlePlayerTopObstacleCollision(window, dt); //jumping
 
         //Enemy Logic:
         for (int i = 0; i < enemyVec.size(); i++) {
