@@ -4,6 +4,9 @@
 #include "Player.hpp"
 #include "Coin.hpp"
 #include "Enemy.hpp"
+#include "CustomWall.hpp"
+#include "ClassicWall.hpp"
+#include "Finish.hpp"
 #include <vector>
 #include <memory>
 
@@ -19,8 +22,9 @@ class Level {
     sf::RectangleShape ground;
 
     //std::vector<Coin> coinVec;
-    std::vector<sf::RectangleShape> obstacleVec;
+    std::vector<std::shared_ptr<CustomWall>> obstacleVec;
     std::vector<std::shared_ptr<Enemy>> enemyVec;
+
 
 public:
     Level() {
@@ -31,26 +35,27 @@ public:
         ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
 
         //obstacle object:
-        sf::RectangleShape obstacle;
-        obstacle.setSize({ 100, 100 });
+        std::shared_ptr<ClassicWall> obstacle = std::make_shared<ClassicWall>();
+
+        obstacle->setSize({ 100, 100 });
         float obstacleY = groundHeight + 32 - 100;
-        obstacle.setFillColor(sf::Color::Red);
-        obstacle.setPosition({ 300, obstacleY }); //32 is the height of the player sprite
+        obstacle->setFillColor(sf::Color::Red);
+        obstacle->setPos({ 300, obstacleY }); //32 is the height of the player sprite
 
         obstacleVec.push_back(obstacle);
 
-        sf::RectangleShape obstacle2;
-        obstacle2.setSize({ 100, 20 });
+        std::shared_ptr<ClassicWall> obstacle2 = std::make_shared<ClassicWall>();
+        obstacle2->setSize({ 100, 20 });
         float obstacle2Y = groundHeight + 32 - 300;
-        obstacle2.setFillColor(sf::Color::Red);
-        obstacle2.setPosition({ 500, obstacle2Y }); //32 is the height of the player sprite
+        obstacle2->setFillColor(sf::Color::Red);
+        obstacle2->setPos({ 500, obstacle2Y }); //32 is the height of the player sprite
         obstacleVec.push_back(obstacle2);
 
-        sf::RectangleShape obstacle3;
-        obstacle3.setSize({ 100, 100 });
+        std::shared_ptr<ClassicWall> obstacle3 = std::make_shared<ClassicWall>();
+        obstacle3->setSize({ 100, 100 });
         float obstacle3Y = groundHeight + 32 - 100;
-        obstacle3.setFillColor(sf::Color::Red);
-        obstacle3.setPosition({ 700, obstacle3Y }); //32 is the height of the player sprite
+        obstacle3->setFillColor(sf::Color::Red);
+        obstacle3->setPos({ 700, obstacle3Y }); //32 is the height of the player sprite
 
         obstacleVec.push_back(obstacle3);
 
@@ -71,14 +76,38 @@ public:
         enemy1->setPos({ 700, 300 });
 
         enemyVec.push_back(enemy1);
+
+
+        std::shared_ptr<Enemy> enemy2 = std::make_shared<Enemy>();
+        enemy2->setPos({ 550, 100 });
+
+        enemyVec.push_back(enemy2);
+
+        // Finish 
+        std::shared_ptr<Finish> finish = std::make_shared<Finish>();
+        finish->setPos({ 1000, 0 });
+        finish->setSize({ 100, groundHeight + 32 });
+        obstacleVec.push_back(finish);
+
+    }
+
+    void gameWin() {
+        std::cout << "You win!" << std::endl;
     }
 
     void handlePlayerBottomObstacleCollision(float dt) {
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
-            sf::RectangleShape o = obstacleVec.at(i);
+            sf::RectangleShape o = obstacleVec.at(i)->getShape();
             if (player.bottomObstacleCollision(o)) {
-                colliding = true;
+                switch(obstacleVec.at(i)->type) {
+                    case WallType::ClassicWall:
+                        colliding = true;
+                        break;
+                    case WallType::Finish:
+                        gameWin();
+                        break;
+                }
                 break;
             }
         }
@@ -95,9 +124,16 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
-                sf::RectangleShape o = obstacleVec.at(i);
+                sf::RectangleShape o = obstacleVec.at(i)->getShape();
                 if (player.rightObstacleCollision(o)) {
-                    colliding = true;
+                    switch(obstacleVec.at(i)->type) {
+                        case WallType::ClassicWall:
+                            colliding = true;
+                            break;
+                        case WallType::Finish:
+                            gameWin();
+                            break;
+                    }
                     break;
                 }
             }
@@ -112,9 +148,16 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
-                sf::RectangleShape o = obstacleVec.at(i);
+                sf::RectangleShape o = obstacleVec.at(i)->getShape();
                 if (player.leftObstacleCollision(o)) {
-                    colliding = true;
+                    switch(obstacleVec.at(i)->type) {
+                        case WallType::ClassicWall:
+                            colliding = true;
+                            break;
+                        case WallType::Finish:
+                            gameWin();
+                            break;
+                    }
                     break;
                 }
             }
@@ -138,9 +181,16 @@ public:
         if(player.isJumping) {
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
-                sf::RectangleShape o = obstacleVec.at(i);
+                sf::RectangleShape o = obstacleVec.at(i)->getShape();
                 if (player.topObstacleCollision(o)) {
-                    colliding = true;
+                    switch(obstacleVec.at(i)->type) {
+                        case WallType::ClassicWall:
+                            colliding = true;
+                            break;
+                        case WallType::Finish:
+                            gameWin();
+                            break;
+                    }
                     break;
                 }
             }
@@ -160,7 +210,7 @@ public:
         // bottom collision
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
-            sf::RectangleShape o = obstacleVec.at(i);
+            sf::RectangleShape o = obstacleVec.at(i)->getShape();
             if (e->bottomObstacleCollision(o)) {
                 colliding = true;
                 break;
@@ -178,7 +228,7 @@ public:
             //check left collision
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
-                sf::RectangleShape o = obstacleVec.at(i);
+                sf::RectangleShape o = obstacleVec.at(i)->getShape();
                 if (e->leftObstacleCollision(o)) {
                     colliding = true;
                     break;
@@ -195,7 +245,7 @@ public:
             //check right collision
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
-                sf::RectangleShape o = obstacleVec.at(i);
+                sf::RectangleShape o = obstacleVec.at(i)->getShape();
                 if (e->rightObstacleCollision(o)) {
                     colliding = true;
                     break;
@@ -253,7 +303,7 @@ public:
         */
 
         for(int i = 0; i < obstacleVec.size(); i++) {
-            window.draw(obstacleVec.at(i));
+            window.draw(obstacleVec.at(i)->getShape());
         }
 
         for(int i = 0; i < enemyVec.size(); i++) {
