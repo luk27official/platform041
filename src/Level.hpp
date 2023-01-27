@@ -10,9 +10,6 @@
 class Level {
     int score = 0;
     const int groundHeight = 500;
-    const float gravitySpeed = 800;
-    const float moveSpeed = 300;
-    const float resetJumpTime = 0.75; //time in seconds
     
     //clock for jumping
     sf::Clock jumpClock;
@@ -47,8 +44,15 @@ public:
         float obstacle2Y = groundHeight + 32 - 300;
         obstacle2.setFillColor(sf::Color::Red);
         obstacle2.setPosition({ 500, obstacle2Y }); //32 is the height of the player sprite
-
         obstacleVec.push_back(obstacle2);
+
+        sf::RectangleShape obstacle3;
+        obstacle3.setSize({ 100, 100 });
+        float obstacle3Y = groundHeight + 32 - 100;
+        obstacle3.setFillColor(sf::Color::Red);
+        obstacle3.setPosition({ 700, obstacle3Y }); //32 is the height of the player sprite
+
+        obstacleVec.push_back(obstacle3);
 
         //Coin Objects:
         /*
@@ -82,7 +86,7 @@ public:
         //Gravity Logic:
         if(!colliding) {
             if (player.getY() < groundHeight && player.isJumping == false) {
-                player.move({ 0, gravitySpeed * dt });
+                player.move({ 0, player.gravity * dt });
             }
         }
     }
@@ -98,7 +102,7 @@ public:
                 }
             }
             if(!colliding) {
-                player.move({ moveSpeed * dt, 0 });
+                player.move({ player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
@@ -115,7 +119,7 @@ public:
                 }
             }
             if(!colliding && player.getX() > 0) {
-                player.move({ -moveSpeed * dt, 0 });
+                player.move({ -player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
@@ -124,7 +128,7 @@ public:
     void handlePlayerTopObstacleCollision(float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             if(!player.isJumping) {
-                if(jumpClock.getElapsedTime().asSeconds() > resetJumpTime) {
+                if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
                     player.isJumping = true;
                     jumpClock.restart();
                 }
@@ -141,15 +145,70 @@ public:
                 }
             }
 
-            if(jumpClock.getElapsedTime().asSeconds() > resetJumpTime) {
+            if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
                 player.isJumping = false;
                 jumpClock.restart();
             }
 
             if(!colliding && player.getY() > 0) {
-                player.move({ 0, -moveSpeed * dt });
+                player.move({ 0, -player.moveSpeed * dt });
             }
         }
+    }
+
+    void handleEnemyObstacleCollision(std::shared_ptr<Enemy> e, float dt) {
+        // bottom collision
+        bool colliding = false;
+        for (int i = 0; i < obstacleVec.size(); i++) {
+            sf::RectangleShape o = obstacleVec.at(i);
+            if (e->bottomObstacleCollision(o)) {
+                colliding = true;
+                break;
+            }
+        }
+
+        //Gravity Logic:
+        if(!colliding) {
+            if (e->getY() < groundHeight) {
+                e->move({ 0, e->gravity * dt });
+            }
+        }
+
+        if(e->direction == Direction::Left) {
+            //check left collision
+            bool colliding = false;
+            for (int i = 0; i < obstacleVec.size(); i++) {
+                sf::RectangleShape o = obstacleVec.at(i);
+                if (e->leftObstacleCollision(o)) {
+                    colliding = true;
+                    break;
+                }
+            }
+            if(!colliding && e->getX() > 0) {
+                e->move({ -e->moveSpeed * dt, 0 });
+            }
+            else {
+                e->direction = Direction::Right;
+            }
+        }
+        else if (e->direction == Direction::Right) {
+            //check right collision
+            bool colliding = false;
+            for (int i = 0; i < obstacleVec.size(); i++) {
+                sf::RectangleShape o = obstacleVec.at(i);
+                if (e->rightObstacleCollision(o)) {
+                    colliding = true;
+                    break;
+                }
+            }
+            if(!colliding) {
+                e->move({ e->moveSpeed * dt, 0 });
+            }
+            else {
+                e->direction = Direction::Left;
+            }
+        }
+
     }
 
     void update(sf::RenderWindow& window, float dt) {
@@ -176,6 +235,9 @@ public:
         //Enemy Logic:
         for (int i = 0; i < enemyVec.size(); i++) {
             std::shared_ptr<Enemy> e = enemyVec.at(i);
+
+            handleEnemyObstacleCollision(e, dt);
+
             if (player.isCollidingWithEnemy(e)) {
                 player.die(window);
                 break;

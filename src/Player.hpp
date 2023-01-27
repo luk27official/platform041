@@ -13,6 +13,9 @@ private:
 
 public:
     bool isJumping = false;
+    const float gravity = 800;
+    const float moveSpeed = 300;
+    const float resetJumpTime = 0.75; //time in seconds
 
     Player() {
         sprite.setPosition({ 0, 500 });
@@ -106,4 +109,5 @@ public:
         }
         return false;
     }
+    
 };
