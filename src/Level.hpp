@@ -3,13 +3,16 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include "Coin.hpp"
+#include "Enemy.hpp"
+#include <vector>
+#include <memory>
 
 class Level {
     int score = 0;
     const int groundHeight = 500;
-    const float gravitySpeed = 0.25;
-    const float moveSpeed = 0.1;
-    const float resetJumpTime = 0.5; //time in seconds
+    const float gravitySpeed = 800;
+    const float moveSpeed = 300;
+    const float resetJumpTime = 0.75; //time in seconds
     
     //clock for jumping
     sf::Clock jumpClock;
@@ -18,14 +21,12 @@ class Level {
     
     sf::RectangleShape ground;
 
-    std::vector<Coin> coinVec;
+    //std::vector<Coin> coinVec;
     std::vector<sf::RectangleShape> obstacleVec;
+    std::vector<std::shared_ptr<Enemy>> enemyVec;
 
 public:
     Level() {
-        //Player Object:
-        //player.setPos({ 50, 700 });
-    
         //Ground Object:
         ground.setSize({ 3000, 100 });
         float groundY = groundHeight + 32;
@@ -50,6 +51,7 @@ public:
         obstacleVec.push_back(obstacle2);
 
         //Coin Objects:
+        /*
         Coin coin1;
         Coin coin2;
 
@@ -58,19 +60,16 @@ public:
 
         coinVec.push_back(coin1);
         coinVec.push_back(coin2);
+        */
+
+        //Enemy Objects:
+        std::shared_ptr<Enemy> enemy1 = std::make_shared<Enemy>();
+        enemy1->setPos({ 700, 300 });
+
+        enemyVec.push_back(enemy1);
     }
 
-    void update(sf::RenderWindow& window) {
-        //Coin Logic:
-        for (int i = 0; i < coinVec.size(); i++) {
-            Coin c = coinVec.at(i);
-            if (player.isCollidingWithCoin(c)) {
-                coinVec.erase(coinVec.begin() + i);
-                score++;
-            }
-        }
-
-        //Obstacle Logic: bottom collision
+    void handlePlayerBottomObstacleCollision(float dt) {
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
             sf::RectangleShape o = obstacleVec.at(i);
@@ -83,13 +82,14 @@ public:
         //Gravity Logic:
         if(!colliding) {
             if (player.getY() < groundHeight && player.isJumping == false) {
-                player.move({ 0, gravitySpeed });
+                player.move({ 0, gravitySpeed * dt });
             }
         }
+    }
 
-        //Obstacle Logic: right collision
+    void handlePlayerRightObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            colliding = false;
+            bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
                 if (player.rightObstacleCollision(o)) {
@@ -98,14 +98,15 @@ public:
                 }
             }
             if(!colliding) {
-                player.move({ moveSpeed, 0 });
+                player.move({ moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
+    }
 
-        //Obstacle Logic: left collision
+    void handlePlayerLeftObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            colliding = false;
+            bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
                 if (player.leftObstacleCollision(o)) {
@@ -114,12 +115,13 @@ public:
                 }
             }
             if(!colliding && player.getX() > 0) {
-                player.move({ -moveSpeed, 0 });
+                player.move({ -moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
         }
+    }
 
-        //Obstacle Logic: top collision
+    void handlePlayerTopObstacleCollision(float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             if(!player.isJumping) {
                 if(jumpClock.getElapsedTime().asSeconds() > resetJumpTime) {
@@ -130,7 +132,7 @@ public:
         }
 
         if(player.isJumping) {
-            colliding = false;
+            bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
                 if (player.topObstacleCollision(o)) {
@@ -145,18 +147,55 @@ public:
             }
 
             if(!colliding && player.getY() > 0) {
-                player.move({ 0, -moveSpeed });
+                player.move({ 0, -moveSpeed * dt });
+            }
+        }
+    }
+
+    void update(sf::RenderWindow& window, float dt) {
+        //Coin Logic:
+        
+        /*
+        for (int i = 0; i < coinVec.size(); i++) {
+            Coin c = coinVec.at(i);
+            if (player.isCollidingWithCoin(c)) {
+                coinVec.erase(coinVec.begin() + i);
+                score++;
+            }
+        }
+        */
+
+        handlePlayerBottomObstacleCollision(dt); //gravity
+
+        handlePlayerRightObstacleCollision(window, dt);
+
+        handlePlayerLeftObstacleCollision(window, dt);
+
+        handlePlayerTopObstacleCollision(dt); //jumping
+
+        //Enemy Logic:
+        for (int i = 0; i < enemyVec.size(); i++) {
+            std::shared_ptr<Enemy> e = enemyVec.at(i);
+            if (player.isCollidingWithEnemy(e)) {
+                player.die(window);
+                break;
             }
         }
     }
 
     void drawTo(sf::RenderWindow& window) {
+        /*
         for(int i = 0; i < coinVec.size(); i++) {
             coinVec.at(i).drawTo(window);
         }
+        */
 
         for(int i = 0; i < obstacleVec.size(); i++) {
             window.draw(obstacleVec.at(i));
+        }
+
+        for(int i = 0; i < enemyVec.size(); i++) {
+            enemyVec.at(i)->drawTo(window);
         }
 
         window.draw(ground);
@@ -164,7 +203,6 @@ public:
     }
 
     void handleEvents(sf::Event& event, sf::Window& window) {
-        //Event Loop:
         while (window.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::Closed: {

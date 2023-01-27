@@ -3,6 +3,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Coin.hpp"
+#include "Enemy.hpp"
+#include <memory>
  
 class Player {
 private:
@@ -36,6 +38,12 @@ public:
 
     int getX() {
         return sprite.getPosition().x;
+    }
+
+    void die(sf::RenderWindow &window) {
+        std::cout << "You died!" << std::endl;
+        window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+        sprite.setPosition({ 0, 500 });
     }
  
     bool isCollidingWithCoin(Coin& coin) {
@@ -88,6 +96,13 @@ public:
             if (sprite.getPosition().y + 1 > rect.getPosition().y + rect.getGlobalBounds().height) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    bool isCollidingWithEnemy(std::shared_ptr<Enemy> enemy) {
+        if (sprite.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
+            return true;
         }
         return false;
     }
