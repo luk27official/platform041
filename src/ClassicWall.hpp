@@ -12,6 +12,7 @@ public:
         //shape.setSize({ 100, 100 });
         //shape.setTexture(&txt);
         type = WallType::ClassicWall;
+        setFillColor(sf::Color::Black);
     }
 
     void setFillColor(const sf::Color color) {

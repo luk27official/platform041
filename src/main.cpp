@@ -24,7 +24,7 @@ int main() {
  
         level.update(window, dt);
  
-        window.clear();
+        window.clear(sf::Color::White);
 
         level.drawTo(window);
 

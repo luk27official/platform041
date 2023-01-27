@@ -13,6 +13,7 @@
 class Level {
     int score = 0;
     const int groundHeight = 500;
+    const int playerHeight = 32;
     
     //clock for jumping
     sf::Clock jumpClock;
@@ -30,7 +31,7 @@ public:
     Level() {
         //Ground Object:
         ground.setSize({ 3000, 100 });
-        float groundY = groundHeight + 32;
+        float groundY = groundHeight + playerHeight;
         ground.setFillColor(sf::Color::Green);
         ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
 
@@ -38,24 +39,22 @@ public:
         std::shared_ptr<ClassicWall> obstacle = std::make_shared<ClassicWall>();
 
         obstacle->setSize({ 100, 100 });
-        float obstacleY = groundHeight + 32 - 100;
-        obstacle->setFillColor(sf::Color::Red);
-        obstacle->setPos({ 300, obstacleY }); //32 is the height of the player sprite
+        float obstacleY = groundHeight + playerHeight - 100;
+        obstacle->setPos({ 300, obstacleY }); //playerHeight is the height of the player sprite
 
         obstacleVec.push_back(obstacle);
 
         std::shared_ptr<ClassicWall> obstacle2 = std::make_shared<ClassicWall>();
         obstacle2->setSize({ 100, 20 });
-        float obstacle2Y = groundHeight + 32 - 300;
-        obstacle2->setFillColor(sf::Color::Red);
-        obstacle2->setPos({ 500, obstacle2Y }); //32 is the height of the player sprite
+        float obstacle2Y = groundHeight + playerHeight - 300;
+        obstacle2->setPos({ 500, obstacle2Y }); //playerHeight is the height of the player sprite
+        
         obstacleVec.push_back(obstacle2);
 
         std::shared_ptr<ClassicWall> obstacle3 = std::make_shared<ClassicWall>();
         obstacle3->setSize({ 100, 100 });
-        float obstacle3Y = groundHeight + 32 - 100;
-        obstacle3->setFillColor(sf::Color::Red);
-        obstacle3->setPos({ 700, obstacle3Y }); //32 is the height of the player sprite
+        float obstacle3Y = groundHeight + playerHeight - 100;
+        obstacle3->setPos({ 700, obstacle3Y }); //playerHeight is the height of the player sprite
 
         obstacleVec.push_back(obstacle3);
 
@@ -72,13 +71,13 @@ public:
         */
 
         //Enemy Objects:
-        std::shared_ptr<Enemy> enemy1 = std::make_shared<Enemy>();
+        std::shared_ptr<Enemy> enemy1 = std::make_shared<Enemy>(800, 150, "res/enemy.png");
         enemy1->setPos({ 700, 300 });
 
         enemyVec.push_back(enemy1);
 
 
-        std::shared_ptr<Enemy> enemy2 = std::make_shared<Enemy>();
+        std::shared_ptr<Enemy> enemy2 = std::make_shared<Enemy>(800, 200, "res/enemy2.png");
         enemy2->setPos({ 550, 100 });
 
         enemyVec.push_back(enemy2);
@@ -86,7 +85,7 @@ public:
         // Finish 
         std::shared_ptr<Finish> finish = std::make_shared<Finish>();
         finish->setPos({ 1000, 0 });
-        finish->setSize({ 100, groundHeight + 32 });
+        finish->setSize({ 100, (float)(groundHeight + playerHeight) });
         obstacleVec.push_back(finish);
 
     }
@@ -219,7 +218,7 @@ public:
 
         //Gravity Logic:
         if(!colliding) {
-            if (e->getY() < groundHeight) {
+            if (e->getY() < groundHeight - e->getGlobalBounds().height + playerHeight) {
                 e->move({ 0, e->gravity * dt });
             }
         }

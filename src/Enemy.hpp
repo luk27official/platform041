@@ -1,10 +1,6 @@
 #pragma once
  
 #include <SFML/Graphics.hpp>
- 
-enum class EnemyType {
-    EnemyOne
-};
 
 enum class Direction {
     Left,
@@ -18,17 +14,18 @@ private:
 
 public:
     Direction direction;
-    EnemyType type;
 
-    const float gravity = 800;
-    const float moveSpeed = 150;
+    float gravity = 800;
+    float moveSpeed = 150;
 
-    Enemy() {
-        type = EnemyType::EnemyOne;
+    Enemy(float gravity, float moveSpeed, const std::string& texturePath)
+    {
         direction = Direction::Left;
 
-        sprite.setPosition({ 0, 500 });
-        txt.loadFromFile("res/enemy.png");
+        this->gravity = gravity;
+        this->moveSpeed = moveSpeed;
+
+        txt.loadFromFile(texturePath);
         sprite.setTexture(txt);
     }
 
@@ -99,6 +96,4 @@ public:
         }
         return false;
     }
-
-
 };
