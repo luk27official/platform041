@@ -7,10 +7,13 @@
 class Level {
     int score = 0;
     const int groundHeight = 500;
-    const float gravitySpeed = 0.3;
+    const float gravitySpeed = 0.25;
     const float moveSpeed = 0.1;
-    bool isJumping = false;
+    const float resetJumpTime = 0.5; //time in seconds
     
+    //clock for jumping
+    sf::Clock jumpClock;
+
     Player player;
     
     sf::RectangleShape ground;
@@ -79,7 +82,7 @@ public:
 
         //Gravity Logic:
         if(!colliding) {
-            if (player.getY() < groundHeight && isJumping == false) {
+            if (player.getY() < groundHeight && player.isJumping == false) {
                 player.move({ 0, gravitySpeed });
             }
         }
@@ -118,6 +121,15 @@ public:
 
         //Obstacle Logic: top collision
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            if(!player.isJumping) {
+                if(jumpClock.getElapsedTime().asSeconds() > resetJumpTime) {
+                    player.isJumping = true;
+                    jumpClock.restart();
+                }
+            }
+        }
+
+        if(player.isJumping) {
             colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i);
@@ -126,8 +138,13 @@ public:
                     break;
                 }
             }
+
+            if(jumpClock.getElapsedTime().asSeconds() > resetJumpTime) {
+                player.isJumping = false;
+                jumpClock.restart();
+            }
+
             if(!colliding && player.getY() > 0) {
-                isJumping = true;
                 player.move({ 0, -moveSpeed });
             }
         }
@@ -150,11 +167,19 @@ public:
         //Event Loop:
         while (window.pollEvent(event)) {
             switch (event.type) {
-                case sf::Event::Closed:
+                case sf::Event::Closed: {
                     window.close();
+                    break;
+                }
     
                 case sf::Event::KeyReleased:
-                    isJumping = false;
+                    if(event.key.code == sf::Keyboard::Up) {
+                        player.isJumping = false;
+                    }
+                    break;
+                
+                default:
+                    break;
             }
         }
     }

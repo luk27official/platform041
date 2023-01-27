@@ -10,6 +10,7 @@ private:
     sf::Texture texture;
 
 public:
+    bool isJumping = false;
 
     Player() {
         sprite.setPosition({ 0, 500 });
