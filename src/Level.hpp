@@ -10,6 +10,7 @@
 #include "Finish.hpp"
 #include "KillingObstacle.hpp"
 #include "Direction.hpp"
+#include "Bullet.hpp"
 
 #include <vector>
 #include <memory>
@@ -18,9 +19,11 @@ class Level {
     int score = 0;
     const int groundHeight = 500;
     const int playerHeight = 32;
+    const int playerWidth = 32;
+    int levelWidth = 3000;
     
-    //clock for jumping
     sf::Clock jumpClock;
+    sf::Clock shootClock;
 
     Player player;
     
@@ -29,12 +32,13 @@ class Level {
     std::vector<std::shared_ptr<Coin>> coinVec;
     std::vector<std::shared_ptr<CustomWall>> obstacleVec;
     std::vector<std::shared_ptr<Enemy>> enemyVec;
+    std::vector<std::shared_ptr<Bullet>> bulletVec;
 
 
 public:
     Level() {
         //Ground Object:
-        ground.setSize({ 3000, 100 });
+        ground.setSize({ levelWidth, 100 });
         float groundY = groundHeight + playerHeight;
         ground.setFillColor(sf::Color::Green);
         ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
@@ -152,7 +156,7 @@ public:
                     break;
                 }
             }
-            if(!colliding) {
+            if(!colliding && player.getX() < levelWidth - playerWidth) {
                 player.move({ player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
@@ -228,6 +232,18 @@ public:
         }
     }
 
+    void handlePlayerShootLogic(sf::RenderWindow& window, float dt) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
+                std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
+                bullet->setPos({ player.getX(), (player.getY() + playerHeight / 2) });
+                bullet->direction = player.direction;
+                bulletVec.push_back(bullet);
+                shootClock.restart();
+            }
+        }
+    }
+
     void handleEnemyObstacleCollision(std::shared_ptr<Enemy> e, float dt) {
         // bottom collision
         bool colliding = false;
@@ -273,7 +289,7 @@ public:
                     break;
                 }
             }
-            if(!colliding) {
+            if(!colliding && e->getX() < levelWidth - e->getGlobalBounds().width) {
                 e->move({ e->moveSpeed * dt, 0 });
             }
             else {
@@ -307,6 +323,43 @@ public:
         }
     }
 
+    void handleBulletLogic(sf::RenderWindow& window, float dt) {
+        for (int i = 0; i < bulletVec.size(); i++) {
+            std::shared_ptr<Bullet> b = bulletVec.at(i);
+
+            //check collision with enemy
+            for (int j = 0; j < enemyVec.size(); j++) {
+                std::shared_ptr<Enemy> e = enemyVec.at(j);
+                if (b->isCollidingWithEnemy(e)) {
+                    enemyVec.erase(enemyVec.begin() + j);
+                    bulletVec.erase(bulletVec.begin() + i);
+                    break;
+                }
+            }
+
+            //check collision with obstacle
+            for (int j = 0; j < obstacleVec.size(); j++) {
+                sf::RectangleShape o = obstacleVec.at(j)->getShape();
+
+                if (b->isCollidingWithObstacle(o)) {
+                    bulletVec.erase(bulletVec.begin() + i);
+                    break;
+                }
+            }
+
+            if(b->direction == Direction::Left) {
+                b->move({ -b->bulletSpeed * dt, 0 });
+            }
+            else if (b->direction == Direction::Right) {
+                b->move({ b->bulletSpeed * dt, 0 });
+            }
+
+            if (b->getX() > levelWidth || b->getX() < 0) {
+                bulletVec.erase(bulletVec.begin() + i);
+            }
+        }
+    }
+
     void handlePlayerLogic(sf::RenderWindow& window, float dt) {
         handlePlayerBottomObstacleCollision(window, dt); //gravity
 
@@ -315,10 +368,14 @@ public:
         handlePlayerLeftObstacleCollision(window, dt);
 
         handlePlayerTopObstacleCollision(window, dt); //jumping
+
+        handlePlayerShootLogic(window, dt);
     }
 
     void update(sf::RenderWindow& window, float dt) {
         handleCoinLogic();
+
+        handleBulletLogic(window, dt);
 
         handlePlayerLogic(window, dt);
 
@@ -328,6 +385,10 @@ public:
     void drawTo(sf::RenderWindow& window) {
         for(int i = 0; i < coinVec.size(); i++) {
             coinVec.at(i)->drawTo(window);
+        }
+
+        for(int i = 0; i < bulletVec.size(); i++) {
+            bulletVec.at(i)->drawTo(window);
         }
 
         for(int i = 0; i < obstacleVec.size(); i++) {

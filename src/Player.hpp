@@ -15,6 +15,7 @@ public:
     const float gravity = 800;
     const float moveSpeed = 300;
     const float resetJumpTime = 0.75; //time in seconds
+    const float resetShootTime = 0.75; //time in seconds
     
     Direction direction;
     bool isJumping = false;
