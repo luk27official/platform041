@@ -12,12 +12,15 @@ private:
     sf::Texture texture;
 
 public:
-    bool isJumping = false;
     const float gravity = 800;
     const float moveSpeed = 300;
     const float resetJumpTime = 0.75; //time in seconds
+    
+    Direction direction;
+    bool isJumping = false;
 
     Player() {
+        direction = Direction::Right;
         sprite.setPosition({ 0, 500 });
         texture.loadFromFile("res/player.png");
         sprite.setTexture(texture);
@@ -49,8 +52,8 @@ public:
         sprite.setPosition({ 0, 500 });
     }
  
-    bool isCollidingWithCoin(Coin& coin) {
-        if (sprite.getGlobalBounds().intersects(coin.getGlobalBounds())) {
+    bool isCollidingWithCoin(std::shared_ptr<Coin> coin) {
+        if (sprite.getGlobalBounds().intersects(coin->getGlobalBounds())) {
             return true;
         }
         return false;

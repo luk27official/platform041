@@ -9,6 +9,7 @@
 #include "ClassicWall.hpp"
 #include "Finish.hpp"
 #include "KillingObstacle.hpp"
+#include "Direction.hpp"
 
 #include <vector>
 #include <memory>
@@ -25,7 +26,7 @@ class Level {
     
     sf::RectangleShape ground;
 
-    //std::vector<Coin> coinVec;
+    std::vector<std::shared_ptr<Coin>> coinVec;
     std::vector<std::shared_ptr<CustomWall>> obstacleVec;
     std::vector<std::shared_ptr<Enemy>> enemyVec;
 
@@ -69,16 +70,14 @@ public:
         obstacleVec.push_back(kill1);
 
         //Coin Objects:
-        /*
-        Coin coin1;
-        Coin coin2;
-
-        coin1.setPos({ 50, 300 });
-        coin2.setPos({ 100, 300 });
+        std::shared_ptr<Coin> coin1 = std::make_shared<Coin>();
+        coin1->setPos({ 50, 300 });
+        
+        std::shared_ptr<Coin> coin2 = std::make_shared<Coin>();
+        coin2->setPos({ 100, 300 });
 
         coinVec.push_back(coin1);
         coinVec.push_back(coin2);
-        */
 
         //Enemy Objects:
         std::shared_ptr<Enemy> enemy1 = std::make_shared<Enemy>(800, 150, "res/enemy.png");
@@ -134,6 +133,7 @@ public:
 
     void handlePlayerRightObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            player.direction = Direction::Right;
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -161,6 +161,7 @@ public:
 
     void handlePlayerLeftObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            player.direction = Direction::Left;
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -282,28 +283,7 @@ public:
 
     }
 
-    void update(sf::RenderWindow& window, float dt) {
-        //Coin Logic:
-        
-        /*
-        for (int i = 0; i < coinVec.size(); i++) {
-            Coin c = coinVec.at(i);
-            if (player.isCollidingWithCoin(c)) {
-                coinVec.erase(coinVec.begin() + i);
-                score++;
-            }
-        }
-        */
-
-        handlePlayerBottomObstacleCollision(window, dt); //gravity
-
-        handlePlayerRightObstacleCollision(window, dt);
-
-        handlePlayerLeftObstacleCollision(window, dt);
-
-        handlePlayerTopObstacleCollision(window, dt); //jumping
-
-        //Enemy Logic:
+    void handleEnemyLogic(sf::RenderWindow& window, float dt) {
         for (int i = 0; i < enemyVec.size(); i++) {
             std::shared_ptr<Enemy> e = enemyVec.at(i);
 
@@ -316,12 +296,39 @@ public:
         }
     }
 
-    void drawTo(sf::RenderWindow& window) {
-        /*
-        for(int i = 0; i < coinVec.size(); i++) {
-            coinVec.at(i).drawTo(window);
+    void handleCoinLogic() {
+        for (int i = 0; i < coinVec.size(); i++) {
+            std::shared_ptr<Coin> c = coinVec.at(i);
+            if (player.isCollidingWithCoin(c)) {
+                coinVec.erase(coinVec.begin() + i);
+                score++;
+                std::cout << "Coin collected! Current score: " << score << std::endl;
+            }
         }
-        */
+    }
+
+    void handlePlayerLogic(sf::RenderWindow& window, float dt) {
+        handlePlayerBottomObstacleCollision(window, dt); //gravity
+
+        handlePlayerRightObstacleCollision(window, dt);
+
+        handlePlayerLeftObstacleCollision(window, dt);
+
+        handlePlayerTopObstacleCollision(window, dt); //jumping
+    }
+
+    void update(sf::RenderWindow& window, float dt) {
+        handleCoinLogic();
+
+        handlePlayerLogic(window, dt);
+
+        handleEnemyLogic(window, dt);        
+    }
+
+    void drawTo(sf::RenderWindow& window) {
+        for(int i = 0; i < coinVec.size(); i++) {
+            coinVec.at(i)->drawTo(window);
+        }
 
         for(int i = 0; i < obstacleVec.size(); i++) {
             window.draw(obstacleVec.at(i)->getShape());

@@ -3,24 +3,26 @@
 #include <SFML/Graphics.hpp>
  
 class Coin {
+private:
+    sf::Sprite sprite;
+    sf::Texture txt;
+
 public:
     Coin() {
-        coin.setRadius(20);
-        coin.setFillColor(sf::Color::Yellow);
+        txt.loadFromFile("res/coin.png");
+        sprite.setTexture(txt);
     }
  
     void drawTo(sf::RenderWindow &window) {
-        window.draw(coin);
+        window.draw(sprite);
     }
  
     sf::FloatRect getGlobalBounds() {
-        return coin.getGlobalBounds();
+        return sprite.getGlobalBounds();
     }
  
     void setPos(sf::Vector2f newPos) {
-        coin.setPosition(newPos);
+        sprite.setPosition(newPos);
     }
-    
-private:
-    sf::CircleShape coin;
+
 };

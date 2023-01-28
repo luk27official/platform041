@@ -1,11 +1,7 @@
 #pragma once
  
 #include <SFML/Graphics.hpp>
-
-enum class Direction {
-    Left,
-    Right
-};
+#include "Direction.hpp"
 
 class Enemy {
 private:
