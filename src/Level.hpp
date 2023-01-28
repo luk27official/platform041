@@ -17,10 +17,10 @@
 
 class Level {
     int score = 0;
-    const int groundHeight = 500;
-    const int playerHeight = 32;
-    const int playerWidth = 32;
-    int levelWidth = 3000;
+    const float groundHeight = 500;
+    const float playerHeight = 32;
+    const float playerWidth = 32;
+    float levelWidth = 3000;
     
     sf::Clock jumpClock;
     sf::Clock shootClock;
@@ -236,7 +236,7 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
                 std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
-                bullet->setPos({ player.getX(), (player.getY() + playerHeight / 2) });
+                bullet->setPos({ (float)player.getX(), (float)(player.getY() + playerHeight / 2) });
                 bullet->direction = player.direction;
                 bulletVec.push_back(bullet);
                 shootClock.restart();
