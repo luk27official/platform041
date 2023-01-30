@@ -49,12 +49,11 @@ class Level {
 public:
 
     void parseGround(json& data) {
+        float width = data["width"];
+        float height = data["height"];
 
-        int width = data["width"];
-        int height = data["height"];
-
-        int x = data["x"];
-        int y = data["y"];
+        float x = data["x"];
+        float y = data["y"];
         
         int r = data["color"]["r"];
         int g = data["color"]["g"];
@@ -63,6 +62,62 @@ public:
         ground.setSize({ width, height });
         ground.setFillColor(sf::Color(r, g, b));
         ground.setPosition({ x, y + playerHeight });
+    }
+
+    void parseWall(json& data, WallType type) {
+        float width = data["width"];
+        float height = data["height"];
+
+        float x = data["x"];
+        float y = data["y"];
+
+        std::shared_ptr<CustomWall> obstacle;
+
+        switch (type)
+        {
+        case WallType::ClassicWall:
+            obstacle = std::make_shared<ClassicWall>();
+            break;
+        case WallType::KillingObstacle:
+            obstacle = std::make_shared<KillingObstacle>();
+            break;
+        case WallType::Finish:
+            obstacle = std::make_shared<Finish>();
+            break;        
+        default:
+            break;
+        }
+
+        obstacle->setSize({ width, height });
+        obstacle->setPos({ x, y + playerHeight });
+
+        obstacleVec.push_back(obstacle);
+    }
+
+    void parseEnemy(json& data) {
+        //enemy size is determined by the texture size
+        float x = data["x"];
+        float y = data["y"];
+
+        int gravity = data["gravity"];
+        int speed = data["speed"];
+
+        std::string texturePath = data["texturePath"];
+
+        std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(gravity, speed, texturePath);
+    
+        enemy->setPos({ x, y + playerHeight });
+        enemyVec.push_back(enemy);
+    }
+
+    void parseCoin(json& data) {
+        float x = data["x"];
+        float y = data["y"];
+
+        std::shared_ptr<Coin> coin = std::make_shared<Coin>();
+
+        coin->setPos({ x, y + playerHeight });
+        coinVec.push_back(coin);
     }
 
     void parseJson(std::string& path) {
@@ -79,6 +134,16 @@ public:
 
             if(e == "ground") {
                 parseGround(element);
+            } else if(e == "wall") {
+                parseWall(element, WallType::ClassicWall);
+            } else if(e == "killzone") {
+                parseWall(element, WallType::KillingObstacle);
+            } else if(e == "finish") {
+                parseWall(element, WallType::Finish);
+            } else if(e == "coin") {
+                parseCoin(element);
+            } else if(e == "enemy") {
+                parseEnemy(element);
             }
         }
 
@@ -91,74 +156,6 @@ public:
         }
 
         parseJson(path);
-
-        //Ground Object:
-        /*
-        ground.setSize({ levelWidth, 100 });
-        float groundY = groundHeight + playerHeight;
-        ground.setFillColor(sf::Color::Green);
-        ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
-        */
-
-        //obstacle object:
-        std::shared_ptr<ClassicWall> obstacle = std::make_shared<ClassicWall>();
-
-        obstacle->setSize({ 100, 100 });
-        float obstacleY = 400 + playerHeight;
-        obstacle->setPos({ 300, obstacleY }); //playerHeight is the height of the player sprite
-
-        obstacleVec.push_back(obstacle);
-
-        std::shared_ptr<ClassicWall> obstacle2 = std::make_shared<ClassicWall>();
-        obstacle2->setSize({ 100, 20 });
-        float obstacle2Y = 200 + playerHeight;
-        obstacle2->setPos({ 500, obstacle2Y }); //playerHeight is the height of the player sprite
-        
-        obstacleVec.push_back(obstacle2);
-
-        std::shared_ptr<ClassicWall> obstacle3 = std::make_shared<ClassicWall>();
-        obstacle3->setSize({ 100, 100 });
-        float obstacle3Y = 400 + playerHeight;
-        obstacle3->setPos({ 700, obstacle3Y }); //playerHeight is the height of the player sprite
-
-        obstacleVec.push_back(obstacle3);
-
-        //Killing Obstacle Object:
-        std::shared_ptr<KillingObstacle> kill1 = std::make_shared<KillingObstacle>();
-        kill1->setSize({ 50, 20 });
-        float kill1Y = 480 + playerHeight;
-        kill1->setPos({ 900, kill1Y }); //playerHeight is the height of the player sprite
-
-        obstacleVec.push_back(kill1);
-
-        //Coin Objects:
-        std::shared_ptr<Coin> coin1 = std::make_shared<Coin>();
-        coin1->setPos({ 50, 300 });
-        
-        std::shared_ptr<Coin> coin2 = std::make_shared<Coin>();
-        coin2->setPos({ 100, 300 });
-
-        coinVec.push_back(coin1);
-        coinVec.push_back(coin2);
-
-        //Enemy Objects:
-        std::shared_ptr<Enemy> enemy1 = std::make_shared<Enemy>(800, 150, "res/enemy.png");
-        enemy1->setPos({ 700, 300 });
-
-        enemyVec.push_back(enemy1);
-
-
-        std::shared_ptr<Enemy> enemy2 = std::make_shared<Enemy>(800, 200, "res/enemy2.png");
-        enemy2->setPos({ 550, 100 });
-
-        enemyVec.push_back(enemy2);
-
-        // Finish 
-        std::shared_ptr<Finish> finish = std::make_shared<Finish>();
-        finish->setPos({ 1000, 0 });
-        finish->setSize({ 100, (float)(groundHeight + playerHeight) });
-        obstacleVec.push_back(finish);
-
     }
 
     void gameWin(sf::RenderWindow &window) {
@@ -170,6 +167,8 @@ public:
 
         sf::Clock clock;
 
+        nextLevel = "menu";
+
         while(clock.getElapsedTime().asSeconds() < 3) {
             window.clear(sf::Color::White);
             window.draw(text);
@@ -177,7 +176,6 @@ public:
             window.display();
         }
 
-        nextLevel = "menu";
     }
 
     sf::Text createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
