@@ -8,6 +8,8 @@ private:
     sf::Texture txt;
 
 public:
+    bool isCollected = false;
+    
     Coin() {
         txt.loadFromFile("res/coin.png");
         sprite.setTexture(txt);

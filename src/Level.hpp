@@ -48,6 +48,20 @@ class Level {
 
 public:
 
+    void die(sf::RenderWindow& window) {
+        score = 0;
+
+        for(int i = 0; i < enemyVec.size(); i++) {
+            enemyVec.at(i)->isAlive = true;
+        }
+
+        for(int i = 0; i < coinVec.size(); i++) {
+            coinVec.at(i)->isCollected = false;
+        }
+
+        player.die(window);
+    }
+
     void parseGround(json& data) {
         float width = data["width"];
         float height = data["height"];
@@ -203,10 +217,7 @@ public:
                         colliding = true;
                         break;
                     case WallType::KillingObstacle:
-                        for(int i = 0; i < enemyVec.size(); i++) {
-                            enemyVec.at(i)->isAlive = true;
-                        }
-                        player.die(window);
+                        die(window);
                         break;
                     case WallType::Finish:
                         gameWin(window);
@@ -236,10 +247,7 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
-                            for(int i = 0; i < enemyVec.size(); i++) {
-                                enemyVec.at(i)->isAlive = true;
-                            }
-                            player.die(window);
+                            die(window);
                             break;
                         case WallType::Finish:
                             gameWin(window);
@@ -267,10 +275,7 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
-                            for(int i = 0; i < enemyVec.size(); i++) {
-                                enemyVec.at(i)->isAlive = true;
-                            }
-                            player.die(window);
+                            die(window);
                             break;
                         case WallType::Finish:
                             gameWin(window);
@@ -306,10 +311,7 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
-                            for(int i = 0; i < enemyVec.size(); i++) {
-                                enemyVec.at(i)->isAlive = true;
-                            }
-                            player.die(window);
+                            die(window);
                             break;
                         case WallType::Finish:
                             gameWin(window);
@@ -408,10 +410,7 @@ public:
             }
 
             if (player.isCollidingWithEnemy(e)) {
-                for(int i = 0; i < enemyVec.size(); i++) {
-                    enemyVec.at(i)->isAlive = true;
-                }
-                player.die(window);
+                die(window);
                 break;
             }
         }
@@ -420,8 +419,12 @@ public:
     void handleCoinLogic() {
         for (int i = 0; i < coinVec.size(); i++) {
             std::shared_ptr<Coin> c = coinVec.at(i);
+            if(c->isCollected) {
+                continue;
+            }
+            
             if (player.isCollidingWithCoin(c)) {
-                coinVec.erase(coinVec.begin() + i);
+                c->isCollected = true;
                 score++;
                 std::cout << "Coin collected! Current score: " << score << std::endl;
             }
@@ -493,7 +496,9 @@ public:
 
     void drawTo(sf::RenderWindow& window) {
         for(int i = 0; i < coinVec.size(); i++) {
-            coinVec.at(i)->drawTo(window);
+            if(!coinVec.at(i)->isCollected) {
+                coinVec.at(i)->drawTo(window);
+            }
         }
 
         for(int i = 0; i < bulletVec.size(); i++) {
