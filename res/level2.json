@@ -26,25 +26,6 @@
         "y": 200
     },
     {
-        "type": "killzone",
-        "width": 100,
-        "height": 100,
-        "x": 500,
-        "y": 0
-    },
-    {
-        "type": "killzone",
-        "width": 20,
-        "height": 180,
-        "x": 540,
-        "y": 220
-    },
-    {
-        "type": "coin",
-        "x": 540,
-        "y": 450
-    },
-    {
         "type": "wall",
         "width": 100,
         "height": 100,
@@ -80,5 +61,15 @@
         "gravity": 800,
         "speed": 200,
         "texturePath": "res/enemy2.png"
+    },
+    {
+        "type": "coin",
+        "x": 50,
+        "y": 300
+    },
+    {
+        "type": "coin",
+        "x": 100,
+        "y": 300
     }
 ]
