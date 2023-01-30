@@ -28,6 +28,7 @@ class Level {
 
     sf::Clock jumpClock;
     sf::Clock shootClock;
+    sf::Clock levelClock;
 
     Player player;
     
@@ -120,12 +121,12 @@ public:
         std::cout << "You win!" << std::endl;
 
         window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
-        std::string displayText = "You win! Score: " + std::to_string(score);
-        sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color::Green);
+        std::string displayText = "You win! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
+        sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(0, 155, 0));
 
         sf::Clock clock;
 
-        while(clock.getElapsedTime().asSeconds() < 2) {
+        while(clock.getElapsedTime().asSeconds() < 3) {
             window.clear(sf::Color::White);
             window.draw(text);
             sleep(sf::milliseconds(100));
@@ -446,10 +447,7 @@ public:
             enemyVec.at(i)->drawTo(window);
         }
 
-        for(int i = 0; i < textVec.size(); i++) {
-            window.draw(textVec.at(i));
-        }
-
+        window.draw(createText(window, "Score: " + std::to_string(score), 20, player.getX(), 20, sf::Color::Red));
         window.draw(ground);
         player.drawTo(window);
     }
