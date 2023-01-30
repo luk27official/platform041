@@ -46,7 +46,7 @@ public:
 
             else {
                 if(level == nullptr) {
-                    level = std::make_shared<Level>();
+                    level = std::make_shared<Level>(currentLevel);
                 }
 
                 level->handleEvents(event, window);

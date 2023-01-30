@@ -2,6 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 #include "Player.hpp"
 #include "Coin.hpp"
 #include "Enemy.hpp"
@@ -14,17 +18,15 @@
 
 #include <vector>
 #include <memory>
-#include <chrono>
-#include <thread>
-#include <future>
 #include <iostream>
 
 class Level {
     int score = 0;
     const float groundHeight = 500;
+    float levelWidth = 3000; //defined by the json
+
     const float playerHeight = 32;
     const float playerWidth = 32;
-    float levelWidth = 3000;
 
     sf::Clock jumpClock;
     sf::Clock shootClock;
@@ -45,44 +47,86 @@ class Level {
     std::string nextLevel;
 
 public:
-    Level() {
+
+    void parseGround(json& data) {
+
+        int width = data["width"];
+        int height = data["height"];
+
+        int x = data["x"];
+        int y = data["y"];
+        
+        int r = data["color"]["r"];
+        int g = data["color"]["g"];
+        int b = data["color"]["b"];
+
+        ground.setSize({ width, height });
+        ground.setFillColor(sf::Color(r, g, b));
+        ground.setPosition({ x, y + playerHeight });
+    }
+
+    void parseJson(std::string& path) {
+        std::string actualPath = "res/" + path + ".json";
+
+        std::cout << actualPath << std::endl;
+
+        std::ifstream f(actualPath);
+        json data = json::parse(f);
+
+        for(auto& element : data) {
+            std::string e = element["type"];
+            e.erase(std::remove_if(e.begin(), e.end(), [](unsigned char x) { return x == '\"'; }), e.end());
+
+            if(e == "ground") {
+                parseGround(element);
+            }
+        }
+
+    }
+
+    Level(std::string& path) {
         if (!font.loadFromFile("res/vermin_vibes.ttf"))
         {
             std::cout << "Error loading font" << std::endl;
         }
 
+        parseJson(path);
+
         //Ground Object:
+        /*
         ground.setSize({ levelWidth, 100 });
         float groundY = groundHeight + playerHeight;
         ground.setFillColor(sf::Color::Green);
         ground.setPosition({ 0, groundY }); //32 is the height of the player sprite
+        */
 
         //obstacle object:
         std::shared_ptr<ClassicWall> obstacle = std::make_shared<ClassicWall>();
 
         obstacle->setSize({ 100, 100 });
-        float obstacleY = groundHeight + playerHeight - 100;
+        float obstacleY = 400 + playerHeight;
         obstacle->setPos({ 300, obstacleY }); //playerHeight is the height of the player sprite
 
         obstacleVec.push_back(obstacle);
 
         std::shared_ptr<ClassicWall> obstacle2 = std::make_shared<ClassicWall>();
         obstacle2->setSize({ 100, 20 });
-        float obstacle2Y = groundHeight + playerHeight - 300;
+        float obstacle2Y = 200 + playerHeight;
         obstacle2->setPos({ 500, obstacle2Y }); //playerHeight is the height of the player sprite
         
         obstacleVec.push_back(obstacle2);
 
         std::shared_ptr<ClassicWall> obstacle3 = std::make_shared<ClassicWall>();
         obstacle3->setSize({ 100, 100 });
-        float obstacle3Y = groundHeight + playerHeight - 100;
+        float obstacle3Y = 400 + playerHeight;
         obstacle3->setPos({ 700, obstacle3Y }); //playerHeight is the height of the player sprite
 
         obstacleVec.push_back(obstacle3);
 
+        //Killing Obstacle Object:
         std::shared_ptr<KillingObstacle> kill1 = std::make_shared<KillingObstacle>();
         kill1->setSize({ 50, 20 });
-        float kill1Y = groundHeight + playerHeight - 20;
+        float kill1Y = 480 + playerHeight;
         kill1->setPos({ 900, kill1Y }); //playerHeight is the height of the player sprite
 
         obstacleVec.push_back(kill1);

@@ -70,7 +70,10 @@ public:
                     }
                     else if (Event.key.code == sf::Keyboard::Return || Event.key.code == sf::Keyboard::Space) {
                         std::cout << "Selected: " << menuTexts[selectedIdx+1].getString().toAnsiString() << std::endl;
-                        currentLevel = menuTexts[selectedIdx+1].getString().toAnsiString();
+                        std::string level = menuTexts[selectedIdx+1].getString().toAnsiString();
+                        std::transform(level.begin(), level.end(), level.begin(), [](unsigned char c){ return std::tolower(c); });
+                        level.erase(std::remove_if(level.begin(), level.end(), [](unsigned char x) { return std::isspace(x); }), level.end());
+                        currentLevel = level;
                     }
                     break;
             }
