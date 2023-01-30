@@ -203,6 +203,9 @@ public:
                         colliding = true;
                         break;
                     case WallType::KillingObstacle:
+                        for(int i = 0; i < enemyVec.size(); i++) {
+                            enemyVec.at(i)->isAlive = true;
+                        }
                         player.die(window);
                         break;
                     case WallType::Finish:
@@ -233,6 +236,9 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
+                            for(int i = 0; i < enemyVec.size(); i++) {
+                                enemyVec.at(i)->isAlive = true;
+                            }
                             player.die(window);
                             break;
                         case WallType::Finish:
@@ -261,6 +267,9 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
+                            for(int i = 0; i < enemyVec.size(); i++) {
+                                enemyVec.at(i)->isAlive = true;
+                            }
                             player.die(window);
                             break;
                         case WallType::Finish:
@@ -297,6 +306,9 @@ public:
                             colliding = true;
                             break;
                         case WallType::KillingObstacle:
+                            for(int i = 0; i < enemyVec.size(); i++) {
+                                enemyVec.at(i)->isAlive = true;
+                            }
                             player.die(window);
                             break;
                         case WallType::Finish:
@@ -391,7 +403,14 @@ public:
 
             handleEnemyObstacleCollision(e, dt);
 
+            if(!e->isAlive) {
+                continue;
+            }
+
             if (player.isCollidingWithEnemy(e)) {
+                for(int i = 0; i < enemyVec.size(); i++) {
+                    enemyVec.at(i)->isAlive = true;
+                }
                 player.die(window);
                 break;
             }
@@ -417,7 +436,7 @@ public:
             for (int j = 0; j < enemyVec.size(); j++) {
                 std::shared_ptr<Enemy> e = enemyVec.at(j);
                 if (b->isCollidingWithEnemy(e)) {
-                    enemyVec.erase(enemyVec.begin() + j);
+                    e->isAlive = false; 
                     bulletVec.erase(bulletVec.begin() + i);
                     break;
                 }
@@ -486,7 +505,9 @@ public:
         }
 
         for(int i = 0; i < enemyVec.size(); i++) {
-            enemyVec.at(i)->drawTo(window);
+            if(enemyVec.at(i)->isAlive) {
+                enemyVec.at(i)->drawTo(window);
+            }
         }
 
         window.draw(createText(window, "Score: " + std::to_string(score), 20, player.getX(), 20, sf::Color::Red));

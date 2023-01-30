@@ -10,7 +10,7 @@ private:
 
 public:
     Direction direction;
-
+    bool isAlive = true;
     float gravity = 800;
     float moveSpeed = 150;
 
