@@ -14,6 +14,10 @@
 
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <thread>
+#include <future>
+#include <iostream>
 
 class Level {
     int score = 0;
@@ -21,7 +25,7 @@ class Level {
     const float playerHeight = 32;
     const float playerWidth = 32;
     float levelWidth = 3000;
-    
+
     sf::Clock jumpClock;
     sf::Clock shootClock;
 
@@ -33,10 +37,19 @@ class Level {
     std::vector<std::shared_ptr<CustomWall>> obstacleVec;
     std::vector<std::shared_ptr<Enemy>> enemyVec;
     std::vector<std::shared_ptr<Bullet>> bulletVec;
+    std::vector<sf::Text> textVec;
 
+    sf::Font font;
+
+    std::string nextLevel;
 
 public:
     Level() {
+        if (!font.loadFromFile("res/vermin_vibes.ttf"))
+        {
+            std::cout << "Error loading font" << std::endl;
+        }
+
         //Ground Object:
         ground.setSize({ levelWidth, 100 });
         float groundY = groundHeight + playerHeight;
@@ -103,8 +116,38 @@ public:
 
     }
 
-    void gameWin() {
+    void gameWin(sf::RenderWindow &window) {
         std::cout << "You win!" << std::endl;
+
+        window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+        std::string displayText = "You win! Score: " + std::to_string(score);
+        sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color::Green);
+
+        sf::Clock clock;
+
+        while(clock.getElapsedTime().asSeconds() < 2) {
+            window.clear(sf::Color::White);
+            window.draw(text);
+            sleep(sf::milliseconds(100));
+            window.display();
+        }
+
+        nextLevel = "menu";
+    }
+
+    sf::Text createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
+        sf::Text text;
+        text.setFont(font);
+        text.setString(displayText);
+        text.setCharacterSize(size);
+        text.setFillColor(color);
+
+        sf::FloatRect textRect = text.getLocalBounds();
+
+        text.setOrigin((int)(textRect.left + textRect.width/2.0f), (int)(textRect.top + textRect.height/2.0f));
+        text.setPosition(sf::Vector2f(x, y));
+
+        return text;
     }
 
     void handlePlayerBottomObstacleCollision(sf::RenderWindow& window, float dt) {
@@ -120,7 +163,7 @@ public:
                         player.die(window);
                         break;
                     case WallType::Finish:
-                        gameWin();
+                        gameWin(window);
                         break;
                 }
                 break;
@@ -150,7 +193,7 @@ public:
                             player.die(window);
                             break;
                         case WallType::Finish:
-                            gameWin();
+                            gameWin(window);
                             break;
                     }
                     break;
@@ -178,7 +221,7 @@ public:
                             player.die(window);
                             break;
                         case WallType::Finish:
-                            gameWin();
+                            gameWin(window);
                             break;
                     }
                     break;
@@ -214,7 +257,7 @@ public:
                             player.die(window);
                             break;
                         case WallType::Finish:
-                            gameWin();
+                            gameWin(window);
                             break;
                     }
                     break;
@@ -372,14 +415,18 @@ public:
         handlePlayerShootLogic(window, dt);
     }
 
-    void update(sf::RenderWindow& window, float dt) {
+    std::string update(sf::RenderWindow& window, float dt, std::string& level) {
+        nextLevel = level;
+
         handleCoinLogic();
 
         handleBulletLogic(window, dt);
 
         handlePlayerLogic(window, dt);
 
-        handleEnemyLogic(window, dt);        
+        handleEnemyLogic(window, dt);
+
+        return nextLevel; 
     }
 
     void drawTo(sf::RenderWindow& window) {
@@ -397,6 +444,10 @@ public:
 
         for(int i = 0; i < enemyVec.size(); i++) {
             enemyVec.at(i)->drawTo(window);
+        }
+
+        for(int i = 0; i < textVec.size(); i++) {
+            window.draw(textVec.at(i));
         }
 
         window.draw(ground);

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <memory>
 
 class Menu {
 private:
@@ -19,12 +20,12 @@ public:
         }
     }
 
-    void createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y) {
+    void createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
         sf::Text text;
         text.setFont(font);
         text.setString(displayText);
         text.setCharacterSize(size);
-        text.setFillColor(sf::Color::Black);
+        text.setFillColor(color);
 
         sf::FloatRect textRect = text.getLocalBounds();
 
@@ -38,8 +39,7 @@ public:
     void drawTo(sf::RenderWindow &window) {
         if(menuTexts.size() == 0) {
             createText(window, "Platform041", 100, 0, 50);
-            createText(window, "Level 1", 40, 0, 200);
-            menuTexts[1].setFillColor(sf::Color::Red);
+            createText(window, "Level 1", 40, 0, 200, sf::Color::Red);
             createText(window, "Level 2", 40, 0, 250);
         }
         else {
