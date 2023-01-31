@@ -9,7 +9,8 @@
 class Player {
 private:
     sf::Sprite sprite;
-    sf::Texture texture;
+    sf::Texture texture_right;
+    sf::Texture texture_left;
 
 public:
     const float gravity = 800;
@@ -23,8 +24,9 @@ public:
     Player() {
         direction = Direction::Right;
         sprite.setPosition({ 0, 500 });
-        texture.loadFromFile("res/player.png");
-        sprite.setTexture(texture);
+        texture_left.loadFromFile("res/player_left.png");
+        texture_right.loadFromFile("res/player.png");
+        sprite.setTexture(texture_right);
     }
  
     void drawTo(sf::RenderWindow &window) {
@@ -41,10 +43,10 @@ public:
 
     void flipSprite() {
         if (direction == Direction::Left) {
-            sprite.setScale({ -1, 1 });
+            sprite.setTexture(texture_left);
         }
         else {
-            sprite.setScale({ 1, 1 });
+            sprite.setTexture(texture_right);
         }
     }
 

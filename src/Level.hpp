@@ -23,7 +23,7 @@ using json = nlohmann::json;
 class Level {
     int score = 0;
     const float groundHeight = 500;
-    float levelWidth = 3000; //defined by the json
+    float levelWidth = 4000; //defined by the json
 
     sf::Clock jumpClock;
     sf::Clock shootClock;
@@ -283,7 +283,7 @@ public:
                     break;
                 }
             }
-            if(!colliding && player.getX() > player.getWidth()) {
+            if(!colliding && player.getX() > 0) {
                 player.move({ -player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }

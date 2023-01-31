@@ -2,6 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "Direction.hpp"
+#include "Enemy.hpp"
+
+#include <memory>
 
 class Bullet {
 private:
