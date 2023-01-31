@@ -38,6 +38,23 @@ public:
     void setPos(sf::Vector2f newPos) {
         sprite.setPosition(newPos);
     }
+
+    void flipSprite() {
+        if (direction == Direction::Left) {
+            sprite.setScale({ -1, 1 });
+        }
+        else {
+            sprite.setScale({ 1, 1 });
+        }
+    }
+
+    int getWidth() {
+        return sprite.getGlobalBounds().width;
+    }
+
+    int getHeight() {
+        return sprite.getGlobalBounds().height;
+    }
  
     int getY() {
         return sprite.getPosition().y;

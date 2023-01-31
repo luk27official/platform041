@@ -25,9 +25,6 @@ class Level {
     const float groundHeight = 500;
     float levelWidth = 3000; //defined by the json
 
-    const float playerHeight = 32;
-    const float playerWidth = 32;
-
     sf::Clock jumpClock;
     sf::Clock shootClock;
     sf::Clock levelClock;
@@ -75,7 +72,7 @@ public:
 
         ground.setSize({ width, height });
         ground.setFillColor(sf::Color(r, g, b));
-        ground.setPosition({ x, y + playerHeight });
+        ground.setPosition({ x, y + player.getHeight() });
     }
 
     void parseWall(json& data, WallType type) {
@@ -103,7 +100,7 @@ public:
         }
 
         obstacle->setSize({ width, height });
-        obstacle->setPos({ x, y + playerHeight });
+        obstacle->setPos({ x, y + player.getHeight() });
 
         obstacleVec.push_back(obstacle);
     }
@@ -120,7 +117,7 @@ public:
 
         std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(gravity, speed, texturePath);
     
-        enemy->setPos({ x, y + playerHeight });
+        enemy->setPos({ x, y + player.getHeight() });
         enemyVec.push_back(enemy);
     }
 
@@ -130,7 +127,7 @@ public:
 
         std::shared_ptr<Coin> coin = std::make_shared<Coin>();
 
-        coin->setPos({ x, y + playerHeight });
+        coin->setPos({ x, y + player.getHeight() });
         coinVec.push_back(coin);
     }
 
@@ -238,6 +235,7 @@ public:
     void handlePlayerRightObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             player.direction = Direction::Right;
+            player.flipSprite();
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -256,7 +254,7 @@ public:
                     break;
                 }
             }
-            if(!colliding && player.getX() < levelWidth - playerWidth) {
+            if(!colliding && player.getX() < levelWidth - player.getWidth()) {
                 player.move({ player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
@@ -266,6 +264,7 @@ public:
     void handlePlayerLeftObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             player.direction = Direction::Left;
+            player.flipSprite();
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -284,7 +283,7 @@ public:
                     break;
                 }
             }
-            if(!colliding && player.getX() > 0) {
+            if(!colliding && player.getX() > player.getWidth()) {
                 player.move({ -player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
             }
@@ -336,7 +335,14 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
                 std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
-                bullet->setPos({ (float)player.getX(), (float)(player.getY() + playerHeight / 2) });
+                float bulletX = player.getX();
+                if(player.direction == Direction::Right) {
+                    bulletX += player.getWidth();
+                }
+                else {
+                    bulletX -= player.getWidth();
+                }
+                bullet->setPos({ bulletX, (float)(player.getY() + player.getHeight() / 2) });
                 bullet->direction = player.direction;
                 bulletVec.push_back(bullet);
                 shootClock.restart();
@@ -357,7 +363,7 @@ public:
 
         //Gravity Logic:
         if(!colliding) {
-            if (e->getY() < groundHeight - e->getGlobalBounds().height + playerHeight) {
+            if (e->getY() < groundHeight - e->getGlobalBounds().height + player.getHeight()) {
                 e->move({ 0, e->gravity * dt });
             }
         }
@@ -441,7 +447,7 @@ public:
                 if(!e->isAlive) {
                     continue;
                 }
-                
+
                 if (b->isCollidingWithEnemy(e)) {
                     e->isAlive = false; 
                     bulletVec.erase(bulletVec.begin() + i);
