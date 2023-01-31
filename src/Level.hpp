@@ -438,6 +438,10 @@ public:
             //check collision with enemy
             for (int j = 0; j < enemyVec.size(); j++) {
                 std::shared_ptr<Enemy> e = enemyVec.at(j);
+                if(!e->isAlive) {
+                    continue;
+                }
+                
                 if (b->isCollidingWithEnemy(e)) {
                     e->isAlive = false; 
                     bulletVec.erase(bulletVec.begin() + i);
