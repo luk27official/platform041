@@ -490,8 +490,16 @@ public:
         handlePlayerShootLogic(window, dt);
     }
 
+    void handleEscape() {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            nextLevel = "menu";
+        }
+    }
+
     std::string update(sf::RenderWindow& window, float dt, std::string& level) {
         nextLevel = level;
+
+        handleEscape();
 
         handleCoinLogic();
 

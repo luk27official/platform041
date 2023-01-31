@@ -9,9 +9,6 @@ FetchContent_MakeAvailable(SFML)
 FetchContent_Declare(json GIT_REPOSITORY https://github.com/nlohmann/json.git GIT_TAG v3.11.2)
 FetchContent_MakeAvailable(json)
 
-set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
-
 add_executable(Platform041 src/main.cpp)
 target_link_libraries(Platform041 PRIVATE sfml-graphics)
 target_link_libraries(Platform041 PRIVATE nlohmann_json::nlohmann_json)
