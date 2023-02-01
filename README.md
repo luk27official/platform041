@@ -1,13 +1,14 @@
 # Platform041
-Repository containing information for the semestral project (NPRG041).
+A singleplayer 2D platform game. Inspired by many 2D platformers like Mario, the player controls a stickman which needs to make their way to the finish as fast as possible (with as many points as possible).
 
-## Game overview (draft)
-- 2D platform game written in C++
-- uses some 2D library (like SFML)
-- contains 1 or more levels to complete
-- level consists of a world (possibly defined in some configuration file) containing some obstacles, collectibles and enemies (again defined in some external file)
-- player's goal is to move the character to the end of the level without dying to enemies, fire/lava, falling out of the bounds...
-- player may collect some collectibles (most likely coins) which will define the end score, not required to collect them though
-- each level contains a timer which may be either a time limit, or simply a part of their statistics
-- the game will be (hopefully) visually designed somehow nice
-- optional extensions: personal statistics, level statistics, new levels, new types of enemies, ...
+## Game overview
+- simple 2D platform game written in C++
+- uses [SFML](https://github.com/SFML/SFML.git) library for 2D graphics and [nlohmann_json](https://github.com/nlohmann/json.git) library for parsing JSON configuration files
+- contains multiple levels
+- a level consists of a world (defined in a JSON configuration file) containing some obstacles, collectibles and enemies
+- player's goal is to move the character to the end of the level without dying to enemies and killing obstacles
+- player may collect coins which will define the end score, they are not required to collect them though
+- each level contains a timer which may be either a time limit, or simply a part of their own personal statistics
+- future optional extensions: personal statistics, level statistics, new levels, new types of enemies, ...
+
+For more details, see the `docs` folder.
