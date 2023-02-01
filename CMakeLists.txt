@@ -10,8 +10,11 @@ FetchContent_Declare(json GIT_REPOSITORY https://github.com/nlohmann/json.git GI
 FetchContent_MakeAvailable(json)
 
 add_executable(Platform041 src/main.cpp)
-target_link_libraries(Platform041 PRIVATE sfml-graphics)
-target_link_libraries(Platform041 PRIVATE nlohmann_json::nlohmann_json)
+
+target_link_libraries(Platform041 PRIVATE 
+    sfml-graphics
+    nlohmann_json::nlohmann_json)
+
 target_compile_features(Platform041 PRIVATE cxx_std_17)
 if (WIN32 AND BUILD_SHARED_LIBS)
     add_custom_command(TARGET Platform041 POST_BUILD

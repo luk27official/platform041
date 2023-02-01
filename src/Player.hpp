@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "Coin.hpp"
 #include "Enemy.hpp"
+#include "Constants.hpp"
+
 #include <memory>
  
 class Player {
@@ -68,7 +70,7 @@ public:
 
     void die(sf::RenderWindow &window) {
         std::cout << "You died!" << std::endl;
-        window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+        window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
         sprite.setPosition({ 0, 500 });
     }
  

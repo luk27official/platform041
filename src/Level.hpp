@@ -22,8 +22,6 @@ using json = nlohmann::json;
 
 class Level {
     int score = 0;
-    const float groundHeight = 500;
-    float levelWidth = 4000; //defined by the json
 
     sf::Clock jumpClock;
     sf::Clock shootClock;
@@ -172,7 +170,8 @@ public:
     void gameWin(sf::RenderWindow &window) {
         std::cout << "You win!" << std::endl;
 
-        window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+        window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
+        
         std::string displayText = "You win! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
         sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(0, 155, 0));
 
@@ -226,7 +225,7 @@ public:
 
         //Gravity Logic:
         if(!colliding) {
-            if (player.getY() < groundHeight && player.isJumping == false) {
+            if (player.getY() < Constants::get_window_height() - 100 && player.isJumping == false) {
                 player.move({ 0, player.gravity * dt });
             }
         }
@@ -254,9 +253,9 @@ public:
                     break;
                 }
             }
-            if(!colliding && player.getX() < levelWidth - player.getWidth()) {
+            if(!colliding && player.getX() < ground.getGlobalBounds().width - player.getWidth()) {
                 player.move({ player.moveSpeed * dt, 0 });
-                window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
+                window.setView(sf::View(sf::Vector2f(player.getX(), Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
             }
         }
     }
@@ -285,7 +284,7 @@ public:
             }
             if(!colliding && player.getX() > 0) {
                 player.move({ -player.moveSpeed * dt, 0 });
-                window.setView(sf::View(sf::Vector2f(player.getX(), 300), sf::Vector2f(1000, 600)));
+                window.setView(sf::View(sf::Vector2f(player.getX(), Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
             }
         }
     }
@@ -363,7 +362,7 @@ public:
 
         //Gravity Logic:
         if(!colliding) {
-            if (e->getY() < groundHeight - e->getGlobalBounds().height + player.getHeight()) {
+            if (e->getY() < (Constants::get_window_height() - 100) - e->getGlobalBounds().height + player.getHeight()) {
                 e->move({ 0, e->gravity * dt });
             }
         }
@@ -395,7 +394,7 @@ public:
                     break;
                 }
             }
-            if(!colliding && e->getX() < levelWidth - e->getGlobalBounds().width) {
+            if(!colliding && e->getX() < ground.getGlobalBounds().width - e->getGlobalBounds().width) {
                 e->move({ e->moveSpeed * dt, 0 });
             }
             else {
@@ -472,7 +471,7 @@ public:
                 b->move({ b->bulletSpeed * dt, 0 });
             }
 
-            if (b->getX() > levelWidth || b->getX() < 0) {
+            if (b->getX() > ground.getGlobalBounds().width || b->getX() < 0) {
                 bulletVec.erase(bulletVec.begin() + i);
             }
         }

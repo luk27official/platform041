@@ -4,6 +4,7 @@
 
 #include "Level.hpp"
 #include "Menu.hpp"
+#include "Constants.hpp"
 #include <memory>
 
 class Controller {
@@ -19,9 +20,9 @@ class Controller {
 
 public:
     void main() {
-        window.create(sf::VideoMode(1000, 600), "Platform041", sf::Style::Titlebar | sf::Style::Close);
+        window.create(sf::VideoMode(Constants::get_window_width(), Constants::get_window_height()), "Platform041", sf::Style::Titlebar | sf::Style::Close);
         window.setKeyRepeatEnabled(true);
-        window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+        window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
     
         while (window.isOpen()) {
     
@@ -33,7 +34,7 @@ public:
                     level = nullptr;
                 }
                 
-                window.setView(sf::View(sf::Vector2f(0, 300), sf::Vector2f(1000, 600)));
+                window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
 
                 window.clear(sf::Color::White);
 
