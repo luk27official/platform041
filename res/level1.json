@@ -98,7 +98,7 @@
         "x": 950,
         "y": 200,
         "gravity": 800,
-        "speed": 277,
+        "speed": 233,
         "texturePath": "res/enemy.png"
     },
     {
@@ -106,7 +106,7 @@
         "x": 1050,
         "y": 200,
         "gravity": 800,
-        "speed": 266,
+        "speed": 222,
         "texturePath": "res/enemy.png"
     },
     {
@@ -114,7 +114,7 @@
         "x": 1150,
         "y": 200,
         "gravity": 800,
-        "speed": 255,
+        "speed": 211,
         "texturePath": "res/enemy.png"
     },
     {
@@ -149,7 +149,7 @@
         "x": 900,
         "y": 350,
         "gravity": 800,
-        "speed": 300,
+        "speed": 230,
         "texturePath": "res/enemy.png"
     },
     {
