@@ -7,9 +7,16 @@
 #include "Constants.hpp"
 #include <memory>
 
+/**
+ * @brief A class that represents a window controller. Used to control the window - change menu/level, draw to the window, etc.
+ */
 class Controller {
     sf::RenderWindow window;
  
+    /**
+     * This string represents the current level. If it is "menu", the menu is drawn. Otherwise, the level with this name is drawn from the res/<levelName>.json file.
+     * Watch out that this string is modified from other classes as well.
+     */
     std::string currentLevel = "menu";
 
     std::shared_ptr<Level> level = nullptr;
@@ -19,6 +26,9 @@ class Controller {
     float dt;
 
 public:
+    /*
+    * @brief The main loop of the game. It handles the events, updates the level and draws to the window.
+    */
     void main() {
         window.create(sf::VideoMode(Constants::get_window_width(), Constants::get_window_height()), "Platform041", sf::Style::Titlebar | sf::Style::Close);
         window.setKeyRepeatEnabled(true);
@@ -60,8 +70,6 @@ public:
 
                 window.display();
             }
-
-            //std::cout << "FPS: " << 1 / dt << std::endl;
         }
     }
 };

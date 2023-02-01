@@ -20,11 +20,16 @@ using json = nlohmann::json;
 #include <memory>
 #include <iostream>
 
+/**
+ * @brief A class that represents a game level
+*/
 class Level {
     int score = 0;
 
+    //clocks for cooldowns
     sf::Clock jumpClock;
     sf::Clock shootClock;
+    //level timer
     sf::Clock levelClock;
 
     Player player;
@@ -42,7 +47,9 @@ class Level {
     std::string nextLevel;
 
 public:
-
+    /**
+     * @brief A method called when the player dies. Resets the enemies, coins and the player
+    */
     void die(sf::RenderWindow& window) {
         score = 0;
 
@@ -57,6 +64,9 @@ public:
         player.die(window);
     }
 
+    /**
+     * @brief A method that parses the "ground" type of element from the json file
+    */
     void parseGround(json& data) {
         float width = data["width"];
         float height = data["height"];
@@ -73,6 +83,9 @@ public:
         ground.setPosition({ x, y + player.getHeight() });
     }
 
+    /**
+     * @brief A method that parses the "wall", "killzone" and "finish" types of element from the json file
+    */
     void parseWall(json& data, WallType type) {
         float width = data["width"];
         float height = data["height"];
@@ -103,6 +116,9 @@ public:
         obstacleVec.push_back(obstacle);
     }
 
+    /**
+     * @brief A method that parses the "enemy" type of element from the json file
+    */
     void parseEnemy(json& data) {
         //enemy size is determined by the texture size
         float x = data["x"];
@@ -119,6 +135,9 @@ public:
         enemyVec.push_back(enemy);
     }
 
+    /**
+     * @brief A method that parses the "coin" type of element from the json file
+    */
     void parseCoin(json& data) {
         float x = data["x"];
         float y = data["y"];
@@ -129,6 +148,9 @@ public:
         coinVec.push_back(coin);
     }
 
+    /**
+     * @brief A method that parses the json file, calls the appropriate methods for each element
+    */
     void parseJson(std::string& path) {
         std::string actualPath = "res/" + path + ".json";
 
@@ -139,6 +161,7 @@ public:
 
         for(auto& element : data) {
             std::string e = element["type"];
+            //remove the quotes from the string
             e.erase(std::remove_if(e.begin(), e.end(), [](unsigned char x) { return x == '\"'; }), e.end());
 
             if(e == "ground") {
@@ -158,18 +181,24 @@ public:
 
     }
 
+    /*
+    * @brief A constructor that loads the font and calls the parseJson method
+    */
     Level(std::string& path) {
+        //here we could possibly do something else when the font fails to load, but it does not really affect the functionality of the game
+        //(the game will still run, but the menu text will not be displayed) 
         if (!font.loadFromFile("res/vermin_vibes.ttf"))
         {
-            std::cout << "Error loading font" << std::endl;
+            std::cerr << "Error loading font" << std::endl;
         }
 
         parseJson(path);
     }
 
+    /**
+     * @brief A method that is called when the player wins the level. Displays a message and waits for 3 seconds before returning to the menu
+    */
     void gameWin(sf::RenderWindow &window) {
-        std::cout << "You win!" << std::endl;
-
         window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
         
         std::string displayText = "You win! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
@@ -180,14 +209,18 @@ public:
         nextLevel = "menu";
 
         while(clock.getElapsedTime().asSeconds() < 3) {
+            //using active waiting - could be potentially changed to a more elegant solution
+            //i.e using multiple threads
             window.clear(sf::Color::White);
             window.draw(text);
             sleep(sf::milliseconds(100));
             window.display();
         }
-
     }
 
+    /*
+    * @brief A method that is called when creating a new text object. Used for the score and the post-game stats
+    */
     sf::Text createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
         sf::Text text;
         text.setFont(font);
@@ -203,6 +236,9 @@ public:
         return text;
     }
 
+    /**
+     * @brief Checks if the player is colliding with any of the obstacles on the bottom. Based on the obstacle type, the player either dies, wins or just collides
+    */
     void handlePlayerBottomObstacleCollision(sf::RenderWindow& window, float dt) {
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
@@ -223,14 +259,18 @@ public:
             }
         }
 
-        //Gravity Logic:
+        //gravity
         if(!colliding) {
+            //the condition is used to prevent the player from falling through the ground
             if (player.getY() < Constants::get_window_height() - 100 && player.isJumping == false) {
                 player.move({ 0, player.gravity * dt });
             }
         }
     }
 
+    /**
+     * @brief Checks if the player is colliding with any of the obstacles on the right when moving. Based on the obstacle type, the player either dies, wins or just collides
+    */
     void handlePlayerRightObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             player.direction = Direction::Right;
@@ -253,6 +293,7 @@ public:
                     break;
                 }
             }
+            //the if condition just prevents the player from moving outside the level
             if(!colliding && player.getX() < ground.getGlobalBounds().width - player.getWidth()) {
                 player.move({ player.moveSpeed * dt, 0 });
                 window.setView(sf::View(sf::Vector2f(player.getX(), Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
@@ -260,6 +301,9 @@ public:
         }
     }
 
+    /**
+     * @brief Checks if the player is colliding with any of the obstacles on the right when moving. Based on the obstacle type, the player either dies, wins or just collides
+    */
     void handlePlayerLeftObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             player.direction = Direction::Left;
@@ -289,6 +333,9 @@ public:
         }
     }
 
+    /**
+     * @brief Checks if the player is colliding with any of the obstacles on the top when moving. Based on the obstacle type, the player either dies, wins or just collides
+    */
     void handlePlayerTopObstacleCollision(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             if(!player.isJumping) {
@@ -319,6 +366,7 @@ public:
                 }
             }
 
+            //jump logic
             if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
                 player.isJumping = false;
                 jumpClock.restart();
@@ -330,17 +378,23 @@ public:
         }
     }
 
+    /*
+    * @brief Handles the logic of the player shooting
+    */
     void handlePlayerShootLogic(sf::RenderWindow& window, float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
                 std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
                 float bulletX = player.getX();
+
+                //to make sure the bullet is not inside the player
                 if(player.direction == Direction::Right) {
                     bulletX += player.getWidth();
                 }
                 else {
                     bulletX -= player.getWidth();
                 }
+
                 bullet->setPos({ bulletX, (float)(player.getY() + player.getHeight() / 2) });
                 bullet->direction = player.direction;
                 bulletVec.push_back(bullet);
@@ -349,6 +403,9 @@ public:
         }
     }
 
+    /*
+    * @brief Handles the logic of the enemy collisions (works the same as the player collisions)
+    */
     void handleEnemyObstacleCollision(std::shared_ptr<Enemy> e, float dt) {
         // bottom collision
         bool colliding = false;
@@ -360,15 +417,15 @@ public:
             }
         }
 
-        //Gravity Logic:
+        //gravity
         if(!colliding) {
             if (e->getY() < (Constants::get_window_height() - 100) - e->getGlobalBounds().height + player.getHeight()) {
                 e->move({ 0, e->gravity * dt });
             }
         }
 
+        //check left collision
         if(e->direction == Direction::Left) {
-            //check left collision
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -384,8 +441,8 @@ public:
                 e->direction = Direction::Right;
             }
         }
+        //check right collision
         else if (e->direction == Direction::Right) {
-            //check right collision
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
                 sf::RectangleShape o = obstacleVec.at(i)->getShape();
@@ -404,6 +461,9 @@ public:
 
     }
 
+    /*
+    * @brief Handles the logic of the enemy (collision with obstacles, collision with player)
+    */
     void handleEnemyLogic(sf::RenderWindow& window, float dt) {
         for (int i = 0; i < enemyVec.size(); i++) {
             std::shared_ptr<Enemy> e = enemyVec.at(i);
@@ -421,6 +481,9 @@ public:
         }
     }
 
+    /*
+    * @brief Handles the logic of the coins (collision with player)
+    */
     void handleCoinLogic() {
         for (int i = 0; i < coinVec.size(); i++) {
             std::shared_ptr<Coin> c = coinVec.at(i);
@@ -431,11 +494,13 @@ public:
             if (player.isCollidingWithCoin(c)) {
                 c->isCollected = true;
                 score++;
-                std::cout << "Coin collected! Current score: " << score << std::endl;
             }
         }
     }
 
+    /*
+    * @brief Handles the logic of the bullets (collision with enemies, collision with obstacles)
+    */
     void handleBulletLogic(sf::RenderWindow& window, float dt) {
         for (int i = 0; i < bulletVec.size(); i++) {
             std::shared_ptr<Bullet> b = bulletVec.at(i);
@@ -477,6 +542,9 @@ public:
         }
     }
 
+    /*
+    * @brief Calls all the functions that handle the logic of the player
+    */
     void handlePlayerLogic(sf::RenderWindow& window, float dt) {
         handlePlayerBottomObstacleCollision(window, dt); //gravity
 
@@ -489,12 +557,18 @@ public:
         handlePlayerShootLogic(window, dt);
     }
 
+    /*
+    * @brief After pressing the escape key, the game will go back to the menu
+    */
     void handleEscape() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             nextLevel = "menu";
         }
     }
 
+    /*
+    * @brief Handles the general logic of the game
+    */
     std::string update(sf::RenderWindow& window, float dt, std::string& level) {
         nextLevel = level;
 
@@ -511,6 +585,9 @@ public:
         return nextLevel; 
     }
 
+    /*
+    * @brief Draws all the objects to the window
+    */
     void drawTo(sf::RenderWindow& window) {
         for(int i = 0; i < coinVec.size(); i++) {
             if(!coinVec.at(i)->isCollected) {
@@ -537,6 +614,9 @@ public:
         player.drawTo(window);
     }
 
+    /*
+    * @brief Handles the events of the game
+    */
     void handleEvents(sf::Event& event, sf::Window& window) {
         while (window.pollEvent(event)) {
             switch (event.type) {

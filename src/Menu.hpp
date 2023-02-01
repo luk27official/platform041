@@ -4,6 +4,9 @@
 #include <iostream>
 #include <memory>
 
+/*
+* @brief A class that represents a menu. Meant to be drawn to the screen.
+*/
 class Menu {
 private:
     sf::Font font;
@@ -14,12 +17,17 @@ public:
     Menu() {
         selectedIdx = 0;
 
+        //here we could possibly do something else when the font fails to load, but it does not really affect the functionality of the game
+        //(the game will still run, but the menu text will not be displayed) 
         if (!font.loadFromFile("res/vermin_vibes.ttf"))
         {
-            std::cout << "Error loading font" << std::endl;
+            std::cerr << "Error loading font" << std::endl;
         }
     }
 
+    /*
+    * @brief Creates a text object with the given size, x, y and color; adds it to the menuTexts vector and draws it to the window
+    */
     void createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
         sf::Text text;
         text.setFont(font);
@@ -36,6 +44,9 @@ public:
         window.draw(text);
     }
 
+    /*
+    * @brief Draws the menu to the window
+    */
     void drawTo(sf::RenderWindow &window) {
         if(menuTexts.size() == 0) {
             createText(window, "Platform041", 100, 0, 50);
@@ -49,6 +60,9 @@ public:
         }
     }
 
+    /*
+    * @brief Handles the events of the menu (keyboard strokes). Allows the user to select the wanted level
+    */
     void handleEvents(sf::Event &Event, sf::RenderWindow &window, std::string& currentLevel) {
         while (window.pollEvent(Event))
         {
@@ -69,7 +83,7 @@ public:
                         menuTexts[selectedIdx+1].setFillColor(sf::Color::Red);
                     }
                     else if (Event.key.code == sf::Keyboard::Return || Event.key.code == sf::Keyboard::Space) {
-                        std::cout << "Selected: " << menuTexts[selectedIdx+1].getString().toAnsiString() << std::endl;
+                        //on space/enter: gets the level name, removes spaces, makes it lowercase and sets it to currentLevel
                         std::string level = menuTexts[selectedIdx+1].getString().toAnsiString();
                         std::transform(level.begin(), level.end(), level.begin(), [](unsigned char c){ return std::tolower(c); });
                         level.erase(std::remove_if(level.begin(), level.end(), [](unsigned char x) { return std::isspace(x); }), level.end());

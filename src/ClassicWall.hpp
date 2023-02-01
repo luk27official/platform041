@@ -3,19 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include "CustomWall.hpp"
 
+/**
+ * @brief A class that represents a classic wall. Meant to be drawn to the screen.
+ */
 class ClassicWall : public CustomWall {
 public:
     ClassicWall() {
-        //txt.loadFromFile("res/classicWall.png");
-
-        //shape.set
-        //shape.setSize({ 100, 100 });
-        //shape.setTexture(&txt);
         type = WallType::ClassicWall;
         setFillColor(sf::Color::Black);
-    }
-
-    void setFillColor(const sf::Color color) {
-        shape.setFillColor(color);
     }
 };

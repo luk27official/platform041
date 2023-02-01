@@ -7,7 +7,10 @@
 #include "Constants.hpp"
 
 #include <memory>
- 
+
+/**
+ * @brief A class that represents the player. Meant to be drawn to the screen.
+ */
 class Player {
 private:
     sf::Sprite sprite;
@@ -31,19 +34,32 @@ public:
         sprite.setTexture(texture_right);
     }
  
+    /*
+    * @brief Draws the player to the window
+    */
     void drawTo(sf::RenderWindow &window) {
         window.draw(sprite);
     }
 
+    /*
+    * @brief Moves the player by the given distance
+    */
     void move(sf::Vector2f distance) {
         sprite.move(distance);
     }
  
+    /*
+    * @brief Sets the position of the player
+    */
     void setPos(sf::Vector2f newPos) {
         sprite.setPosition(newPos);
     }
 
+    /*
+    * @brief Flips the sprite to the correct direction
+    */
     void flipSprite() {
+        //note: here we could just use the scale method, but that moves the sprite as well which we don't want
         if (direction == Direction::Left) {
             sprite.setTexture(texture_left);
         }
@@ -52,28 +68,45 @@ public:
         }
     }
 
+    /*
+    * @brief Returns the width of the player
+    */
     int getWidth() {
         return sprite.getGlobalBounds().width;
     }
 
+    /*
+    * @brief Returns the height of the player
+    */
     int getHeight() {
         return sprite.getGlobalBounds().height;
     }
  
+    /*
+    * @brief Returns the y position of the player
+    */
     int getY() {
         return sprite.getPosition().y;
     }
 
+    /*
+    * @brief Returns the x position of the player
+    */
     int getX() {
         return sprite.getPosition().x;
     }
 
+    /*
+    * @brief Method that is called when the player dies, resets the player position and resets the view
+    */
     void die(sf::RenderWindow &window) {
-        std::cout << "You died!" << std::endl;
         window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
         sprite.setPosition({ 0, 500 });
     }
  
+    /*
+    * @brief Returns true if the player is colliding with the given coin
+    */
     bool isCollidingWithCoin(std::shared_ptr<Coin> coin) {
         if (sprite.getGlobalBounds().intersects(coin->getGlobalBounds())) {
             return true;
@@ -81,6 +114,9 @@ public:
         return false;
     }
 
+    /*
+    * @brief Returns true if the player is colliding with the given obstacle on the left side. For more reference see Enemy.leftObstacleCollision()
+    */
     bool leftObstacleCollision(sf::RectangleShape& rect) {
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
@@ -88,13 +124,15 @@ public:
 
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().x + sprite.getGlobalBounds().width - 1 > rect.getPosition().x) {
-                //std::cout << "a: " << sprite.getPosition().x + sprite.getGlobalBounds().width << " b: " << rect.getPosition().x - 1 << std::endl;
                 return true;
             }
         }
         return false;
     }
 
+    /*
+    * @brief Returns true if the player is colliding with the given obstacle on the right side. For more reference see Enemy.leftObstacleCollision()
+    */
     bool rightObstacleCollision(sf::RectangleShape& rect) {
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
@@ -109,6 +147,9 @@ public:
         return false;
     }
     
+    /*
+    * @brief Returns true if the player is colliding with the given obstacle on the bottom side. For more reference see Enemy.leftObstacleCollision()
+    */
     bool bottomObstacleCollision(sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + sprite.getGlobalBounds().height - 1 < rect.getPosition().y) {
@@ -119,6 +160,9 @@ public:
         return false;
     }
 
+    /*
+    * @brief Returns true if the player is colliding with the given obstacle on the top side. For more reference see Enemy.leftObstacleCollision()
+    */
     bool topObstacleCollision(sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + 1 > rect.getPosition().y + rect.getGlobalBounds().height) {
@@ -128,11 +172,13 @@ public:
         return false;
     }
 
+    /*
+    * @brief Returns true if the player is colliding with the given enemy
+    */
     bool isCollidingWithEnemy(std::shared_ptr<Enemy> enemy) {
         if (sprite.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
             return true;
         }
         return false;
     }
-    
 };
