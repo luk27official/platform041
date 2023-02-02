@@ -1,6 +1,8 @@
 # Platform041
 A singleplayer 2D platform game. Inspired by many 2D platformers like Mario, the player controls a stickman which needs to make their way to the finish as fast as possible (with as many points as possible).
 
+To move the player, use the arrow keys. To select an option in the menu and to shoot, use the spacebar.
+
 ## Game overview
 - simple 2D platform game written in C++
 - uses [SFML](https://github.com/SFML/SFML.git) library for 2D graphics and [nlohmann_json](https://github.com/nlohmann/json.git) library for parsing JSON configuration files
