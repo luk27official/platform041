@@ -154,8 +154,6 @@ public:
     void parseJson(std::string& path) {
         std::string actualPath = "res/" + path + ".json";
 
-        std::cout << actualPath << std::endl;
-
         std::ifstream f(actualPath);
         json data = json::parse(f);
 

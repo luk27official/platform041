@@ -140,7 +140,6 @@ public:
 
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().x + 1 < rect.getPosition().x + rect.getGlobalBounds().width) {
-                //std::cout << "a: " << sprite.getPosition().x + 1 << " b: " << rect.getPosition().x + rect.getGlobalBounds().width << std::endl;
                 return true;
             }
         }
@@ -153,7 +152,6 @@ public:
     bool bottomObstacleCollision(sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + sprite.getGlobalBounds().height - 1 < rect.getPosition().y) {
-                //std::cout << "ax: " << sprite.getPosition().y + sprite.getGlobalBounds().height << " b: " << rect.getPosition().y << std::endl;
                 return true;
             }
         }
