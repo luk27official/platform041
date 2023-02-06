@@ -21,4 +21,7 @@ if (WIN32 AND BUILD_SHARED_LIBS)
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:Platform041> $<TARGET_FILE_DIR:Platform041> COMMAND_EXPAND_LISTS)
 endif()
 
+add_custom_target(copy_assets COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/res ${CMAKE_CURRENT_BINARY_DIR}/res)
+add_dependencies(Platform041 copy_assets)
+
 install(TARGETS Platform041)
