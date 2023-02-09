@@ -270,7 +270,7 @@ public:
      * @brief Checks if the player is colliding with any of the obstacles on the right when moving. Based on the obstacle type, the player either dies, wins or just collides
     */
     void handlePlayerRightObstacleCollision(sf::RenderWindow& window, float dt) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        if (player.isMovingRight) {
             player.direction = Direction::Right;
             player.flipSprite();
             bool colliding = false;
@@ -303,7 +303,7 @@ public:
      * @brief Checks if the player is colliding with any of the obstacles on the right when moving. Based on the obstacle type, the player either dies, wins or just collides
     */
     void handlePlayerLeftObstacleCollision(sf::RenderWindow& window, float dt) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        if (player.isMovingLeft) {
             player.direction = Direction::Left;
             player.flipSprite();
             bool colliding = false;
@@ -335,15 +335,6 @@ public:
      * @brief Checks if the player is colliding with any of the obstacles on the top when moving. Based on the obstacle type, the player either dies, wins or just collides
     */
     void handlePlayerTopObstacleCollision(sf::RenderWindow& window, float dt) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            if(!player.isJumping) {
-                if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
-                    player.isJumping = true;
-                    jumpClock.restart();
-                }
-            }
-        }
-
         if(player.isJumping) {
             bool colliding = false;
             for (int i = 0; i < obstacleVec.size(); i++) {
@@ -380,24 +371,23 @@ public:
     * @brief Handles the logic of the player shooting
     */
     void handlePlayerShootLogic(sf::RenderWindow& window, float dt) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
-                std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
-                float bulletX = player.getX();
+        if (player.isShooting) {
+            std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
+            float bulletX = player.getX();
 
-                //to make sure the bullet is not inside the player
-                if(player.direction == Direction::Right) {
-                    bulletX += player.getWidth();
-                }
-                else {
-                    bulletX -= player.getWidth();
-                }
-
-                bullet->setPos({ bulletX, (float)(player.getY() + player.getHeight() / 2) });
-                bullet->direction = player.direction;
-                bulletVec.push_back(bullet);
-                shootClock.restart();
+            //to make sure the bullet is not inside the player
+            if(player.direction == Direction::Right) {
+                bulletX += player.getWidth();
             }
+            else {
+                bulletX -= player.getWidth();
+            }
+
+            bullet->setPos({ bulletX, (float)(player.getY() + player.getHeight() / 2) });
+            bullet->direction = player.direction;
+            bulletVec.push_back(bullet);
+
+            player.isShooting = false;
         }
     }
 
@@ -556,22 +546,9 @@ public:
     }
 
     /*
-    * @brief After pressing the escape key, the game will go back to the menu
-    */
-    void handleEscape() {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            nextLevel = "menu";
-        }
-    }
-
-    /*
     * @brief Handles the general logic of the game
     */
-    std::string update(sf::RenderWindow& window, float dt, std::string& level) {
-        nextLevel = level;
-
-        handleEscape();
-
+    void update(sf::RenderWindow& window, float dt) {
         handleCoinLogic();
 
         handleBulletLogic(window, dt);
@@ -579,8 +556,6 @@ public:
         handlePlayerLogic(window, dt);
 
         handleEnemyLogic(window, dt);
-
-        return nextLevel; 
     }
 
     /*
@@ -615,17 +590,55 @@ public:
     /*
     * @brief Handles the events of the game
     */
-    void handleEvents(sf::Event& event, sf::Window& window) {
+    std::string handleEvents(sf::Event& event, sf::Window& window, std::string& level) {
+        nextLevel = level;
         while (window.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::Closed: {
                     window.close();
                     break;
                 }
+
+                case sf::Event::KeyPressed:
+                    if(event.key.code == sf::Keyboard::Up) {
+                        if(!player.isJumping) {
+                            if(jumpClock.getElapsedTime().asSeconds() > player.resetJumpTime) {
+                                player.isJumping = true;
+                                jumpClock.restart();
+                            }
+                        }
+                    }
+                    else if(event.key.code == sf::Keyboard::Space) {
+                        if(!player.isShooting) {
+                            if(shootClock.getElapsedTime().asSeconds() > player.resetShootTime) {
+                                player.isShooting = true;
+                                shootClock.restart();
+                            }
+                        }
+                    }
+                    else if(event.key.code == sf::Keyboard::Left) {
+                        player.isMovingLeft = true;
+                    }
+                    else if(event.key.code == sf::Keyboard::Right) {
+                        player.isMovingRight = true;
+                    }
+                    else if(event.key.code == sf::Keyboard::Escape) {
+                        nextLevel = "menu";
+                    }
+                    break;
     
                 case sf::Event::KeyReleased:
                     if(event.key.code == sf::Keyboard::Up) {
                         player.isJumping = false;
+                    }
+                    else if(event.key.code == sf::Keyboard::Space) {
+                        player.isShooting = false;
+                    }
+                    else if(event.key.code == sf::Keyboard::Left) {
+                        player.isMovingLeft = false;
+                    }
+                    else if(event.key.code == sf::Keyboard::Right) {
+                        player.isMovingRight = false;
                     }
                     break;
                 
@@ -633,5 +646,6 @@ public:
                     break;
             }
         }
+        return nextLevel;
     }
 };

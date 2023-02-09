@@ -60,9 +60,9 @@ public:
                     level = std::make_shared<Level>(currentLevel);
                 }
 
-                level->handleEvents(event, window);
+                currentLevel = level->handleEvents(event, window, currentLevel);
         
-                currentLevel = level->update(window, dt, currentLevel);
+                level->update(window, dt);
 
                 window.clear(sf::Color::White);
 

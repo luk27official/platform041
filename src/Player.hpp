@@ -25,6 +25,9 @@ public:
     
     Direction direction;
     bool isJumping = false;
+    bool isShooting = false;
+    bool isMovingLeft = false;
+    bool isMovingRight = false;
 
     Player() {
         direction = Direction::Right;
