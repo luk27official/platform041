@@ -9,6 +9,8 @@ To move the player, use the arrow keys. To select an option in the menu and to s
 
 This project uses the CMake tool to compile all of the necessary libraries and source code. To compile, just run the CMake tool via CLI. It is also possible to run the included scripts - `build.cmd` for Windows (with MinGW installed) or `build.sh` for Linux. After building, the executable is located in the `build` folder. Just run `build/Platform041.exe` or the respective equivalent for other operating systems.
 
+Warning: CMake compiles the SFML and JSON library from scratch. For that, you may need to download those packages (although already included in some systems) - `sudo apt-get install libpthread-stubs0-dev libgl1-mesa-dev libx11-dev libxrandr-dev libfreetype6-dev libglew-dev libjpeg8-dev libsndfile1-dev libopenal-dev`
+
 ## Game overview
 - simple 2D platform game written in C++
 - uses [SFML](https://github.com/SFML/SFML.git) library for 2D graphics and [nlohmann_json](https://github.com/nlohmann/json.git) library for parsing JSON configuration files
