@@ -31,7 +31,7 @@ public:
     */
     void main() {
         window.create(sf::VideoMode(Constants::get_window_width(), Constants::get_window_height()), "Platform041", sf::Style::Titlebar | sf::Style::Close);
-        window.setKeyRepeatEnabled(true);
+        window.setKeyRepeatEnabled(false);
         window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
     
         while (window.isOpen()) {
