@@ -9,7 +9,10 @@ To move the player, use the arrow keys. To select an option in the menu and to s
 
 This project uses the CMake tool to compile all of the necessary libraries and source code. To compile, just run the CMake tool via CLI. It is also possible to run the included scripts - `build.cmd` for Windows (with MinGW installed) or `build.sh` for Linux. After building, the executable is located in the `build` folder. Just run `build/Platform041.exe` or the respective equivalent for other operating systems.
 
-Warning (Debian/WSL users): CMake compiles the SFML and JSON library from scratch. For that, you may need to download those packages (although already included in most systems) - `sudo apt-get install libpthread-stubs0-dev libgl1-mesa-dev libx11-dev libxrandr-dev libfreetype6-dev libglew-dev libjpeg8-dev libsndfile1-dev libopenal-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev`
+Warning (Linux users): CMake compiles the SFML and JSON library from scratch. For that, you may need to download packages listed in [this article](https://www.sfml-dev.org/tutorials/2.5/compile-with-cmake.php#installing-dependencies). Although on most systems these packages are already present and available, you may need to download them manually i.e. via 
+```sh
+sudo apt-get install libpthread-stubs0-dev libgl1-mesa-dev libx11-dev libxrandr-dev libfreetype6-dev libglew-dev libjpeg8-dev libsndfile1-dev libopenal-dev libxcursor-dev libudev-dev libflac-dev libvorbis-dev
+```
 
 ## Game overview
 - simple 2D platform game written in C++
