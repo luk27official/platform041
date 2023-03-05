@@ -26,6 +26,9 @@ public:
         shape.setFillColor(sf::Color::Blue);
     }
 
+    Bullet(const Bullet&) = delete;
+    Bullet& operator=(const Bullet&) = delete;
+    
     /*
     * @brief Draws the bullet to the window
     */
@@ -71,7 +74,7 @@ public:
     /*
     * @brief Returns true, if the bullet is colliding with the given enemy
     */
-    bool isCollidingWithEnemy(const std::shared_ptr<Enemy>& enemy) {
+    bool isCollidingWithEnemy(Enemy* enemy) {
         if (shape.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
             return true;
         }

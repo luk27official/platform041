@@ -14,6 +14,12 @@ protected:
 public:
     WallType type;
 
+    CustomWall() {
+    }
+
+    CustomWall(const CustomWall&) = delete;
+    CustomWall& operator=(const CustomWall&) = delete;
+
     /*
     * @brief Draws the wall to the window
     */

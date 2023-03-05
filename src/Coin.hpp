@@ -18,6 +18,9 @@ public:
         sprite.setTexture(txt);
     }
  
+    Coin(const Coin&) = delete;
+    Coin& operator=(const Coin&) = delete;
+
     /*
     * @brief Draws the coin to the window
     */

@@ -31,6 +31,9 @@ public:
         sprite.setTexture(txt);
     }
 
+    Enemy(const Enemy&) = delete;
+    Enemy& operator=(const Enemy&) = delete;
+
     /*
     * @brief Draws the enemy to the window
     */

@@ -36,10 +36,10 @@ class Level {
     
     sf::RectangleShape ground;
 
-    std::vector<std::shared_ptr<Coin>> coinVec;
-    std::vector<std::shared_ptr<CustomWall>> obstacleVec;
-    std::vector<std::shared_ptr<Enemy>> enemyVec;
-    std::vector<std::shared_ptr<Bullet>> bulletVec;
+    std::vector<std::unique_ptr<Coin>> coinVec;
+    std::vector<std::unique_ptr<CustomWall>> obstacleVec;
+    std::vector<std::unique_ptr<Enemy>> enemyVec;
+    std::vector<std::unique_ptr<Bullet>> bulletVec;
     std::vector<sf::Text> textVec;
 
     sf::Font font;
@@ -93,18 +93,18 @@ public:
         float x = data["x"];
         float y = data["y"];
 
-        std::shared_ptr<CustomWall> obstacle;
+        std::unique_ptr<CustomWall> obstacle;
 
         switch (type)
         {
         case WallType::ClassicWall:
-            obstacle = std::make_shared<ClassicWall>();
+            obstacle = std::make_unique<ClassicWall>();
             break;
         case WallType::KillingObstacle:
-            obstacle = std::make_shared<KillingObstacle>();
+            obstacle = std::make_unique<KillingObstacle>();
             break;
         case WallType::Finish:
-            obstacle = std::make_shared<Finish>();
+            obstacle = std::make_unique<Finish>();
             break;        
         default:
             break;
@@ -113,7 +113,7 @@ public:
         obstacle->setSize({ width, height });
         obstacle->setPos({ x, y + player.getHeight() });
 
-        obstacleVec.push_back(obstacle);
+        obstacleVec.push_back(std::move(obstacle));
     }
 
     /**
@@ -129,10 +129,10 @@ public:
 
         std::string texturePath = data["texturePath"];
 
-        std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>(gravity, speed, texturePath);
+        std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(gravity, speed, texturePath);
     
         enemy->setPos({ x, y + player.getHeight() });
-        enemyVec.push_back(enemy);
+        enemyVec.push_back(std::move(enemy));
     }
 
     /**
@@ -142,10 +142,10 @@ public:
         float x = data["x"];
         float y = data["y"];
 
-        std::shared_ptr<Coin> coin = std::make_shared<Coin>();
+        std::unique_ptr<Coin> coin = std::make_unique<Coin>();
 
         coin->setPos({ x, y + player.getHeight() });
-        coinVec.push_back(coin);
+        coinVec.push_back(std::move(coin));
     }
 
     /**
@@ -372,7 +372,7 @@ public:
     */
     void handlePlayerShootLogic(sf::RenderWindow& window, float dt) {
         if (player.isShooting) {
-            std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
+            std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
             float bulletX = player.getX();
 
             //to make sure the bullet is not inside the player
@@ -385,7 +385,7 @@ public:
 
             bullet->setPos({ bulletX, (float)(player.getY() + player.getHeight() / 2) });
             bullet->direction = player.direction;
-            bulletVec.push_back(bullet);
+            bulletVec.push_back(std::move(bullet));
 
             player.isShooting = false;
         }
@@ -394,7 +394,7 @@ public:
     /*
     * @brief Handles the logic of the enemy collisions (works the same as the player collisions)
     */
-    void handleEnemyObstacleCollision(const std::shared_ptr<Enemy>& e, float dt) {
+    void handleEnemyObstacleCollision(Enemy* e, float dt) {
         // bottom collision
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
@@ -454,7 +454,7 @@ public:
     */
     void handleEnemyLogic(sf::RenderWindow& window, float dt) {
         for (int i = 0; i < enemyVec.size(); i++) {
-            std::shared_ptr<Enemy> e = enemyVec.at(i);
+            Enemy* e = enemyVec.at(i).get();
 
             handleEnemyObstacleCollision(e, dt);
 
@@ -474,7 +474,7 @@ public:
     */
     void handleCoinLogic() {
         for (int i = 0; i < coinVec.size(); i++) {
-            std::shared_ptr<Coin> c = coinVec.at(i);
+            Coin* c = coinVec.at(i).get();
             if(c->isCollected) {
                 continue;
             }
@@ -491,11 +491,11 @@ public:
     */
     void handleBulletLogic(sf::RenderWindow& window, float dt) {
         for (int i = 0; i < bulletVec.size(); i++) {
-            std::shared_ptr<Bullet> b = bulletVec.at(i);
+            Bullet* b = bulletVec.at(i).get();
 
             //check collision with enemy
             for (int j = 0; j < enemyVec.size(); j++) {
-                std::shared_ptr<Enemy> e = enemyVec.at(j);
+                Enemy* e = enemyVec.at(j).get();
                 if(!e->isAlive) {
                     continue;
                 }

@@ -19,7 +19,7 @@ class Controller {
      */
     std::string currentLevel = "menu";
 
-    std::shared_ptr<Level> level = nullptr;
+    std::unique_ptr<Level> level = nullptr;
     Menu menu;
 
     sf::Clock clock;
@@ -57,7 +57,7 @@ public:
 
             else {
                 if(level == nullptr) {
-                    level = std::make_shared<Level>(currentLevel);
+                    level = std::make_unique<Level>(currentLevel);
                 }
 
                 currentLevel = level->handleEvents(event, window, currentLevel);

@@ -110,7 +110,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given coin
     */
-    bool isCollidingWithCoin(const std::shared_ptr<Coin>& coin) {
+    bool isCollidingWithCoin(Coin* coin) {
         if (sprite.getGlobalBounds().intersects(coin->getGlobalBounds())) {
             return true;
         }
@@ -176,7 +176,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given enemy
     */
-    bool isCollidingWithEnemy(const std::shared_ptr<Enemy>& enemy) {
+    bool isCollidingWithEnemy(Enemy* enemy) {
         if (sprite.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
             return true;
         }
