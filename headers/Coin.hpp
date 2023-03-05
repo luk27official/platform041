@@ -1,6 +1,6 @@
 #pragma once
  
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
  
 /**
  * @brief A class that represents a coin. Meant to be drawn to the screen.
@@ -13,10 +13,7 @@ private:
 public:
     bool isCollected = false;
     
-    Coin() {
-        txt.loadFromFile("res/coin.png");
-        sprite.setTexture(txt);
-    }
+    Coin();
  
     Coin(const Coin&) = delete;
     Coin& operator=(const Coin&) = delete;
@@ -24,22 +21,15 @@ public:
     /*
     * @brief Draws the coin to the window
     */
-    void drawTo(sf::RenderWindow &window) {
-        window.draw(sprite);
-    }
+    void drawTo(sf::RenderWindow &window);
     
     /*
     * @brief Returns the global bounds of the coin (used for collision detection)    
     */
-    sf::FloatRect getGlobalBounds() {
-        return sprite.getGlobalBounds();
-    }
+    sf::FloatRect getGlobalBounds();
  
     /*
     * @brief Sets the position of the coin
     */
-    void setPos(const sf::Vector2f newPos) {
-        sprite.setPosition(newPos);
-    }
-
+    void setPos(const sf::Vector2f newPos);
 };

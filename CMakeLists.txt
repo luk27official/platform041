@@ -9,7 +9,7 @@ FetchContent_MakeAvailable(SFML)
 FetchContent_Declare(json GIT_REPOSITORY https://github.com/nlohmann/json.git GIT_TAG v3.11.2)
 FetchContent_MakeAvailable(json)
 
-add_executable(Platform041 src/main.cpp)
+add_executable(Platform041 src/main.cpp src/Bullet.cpp src/ClassicWall.cpp src/Coin.cpp src/Controller.cpp src/CustomWall.cpp src/Enemy.cpp src/Finish.cpp src/KillingObstacle.cpp src/Level.cpp src/Menu.cpp src/Player.cpp)
 
 target_link_libraries(Platform041 PRIVATE 
     sfml-graphics

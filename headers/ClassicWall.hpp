@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 #include "CustomWall.hpp"
 
 /**
@@ -8,8 +8,5 @@
  */
 class ClassicWall : public CustomWall {
 public:
-    ClassicWall() {
-        type = WallType::ClassicWall;
-        setFillColor(sf::Color::Black);
-    }
+    ClassicWall();
 };
