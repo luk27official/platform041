@@ -68,6 +68,7 @@ bool Player::leftObstacleCollision(const sf::RectangleShape &rect) {
 
     if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
         if (sprite.getPosition().x + sprite.getGlobalBounds().width - 1 > rect.getPosition().x) {
+            sprite.setPosition(ceil(sprite.getPosition().x), sprite.getPosition().y);
             return true;
         }
     }
@@ -81,6 +82,7 @@ bool Player::rightObstacleCollision(const sf::RectangleShape &rect) {
 
     if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
         if (sprite.getPosition().x + 1 < rect.getPosition().x + rect.getGlobalBounds().width) {
+            sprite.setPosition(floor(sprite.getPosition().x), sprite.getPosition().y);
             return true;
         }
     }

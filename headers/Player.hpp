@@ -6,6 +6,7 @@
 #include "Enemy.hpp"
 #include "Constants.hpp"
 
+#include <cmath>
 #include <memory>
 
 /**
