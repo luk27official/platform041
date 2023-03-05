@@ -1,6 +1,3 @@
-//
-// Created by luk27 on 05.03.2023.
-//
 #include "../headers/Menu.hpp"
 
 Menu::Menu() {
@@ -36,6 +33,7 @@ void Menu::drawTo(sf::RenderWindow &window) {
         createText(window, "Platform041", 100, 0, 50);
         createText(window, "Level 1", 40, 0, 200, sf::Color::Red);
         createText(window, "Level 2", 40, 0, 250);
+        createText(window, "Scores", 40, 0, 400);
     }
     else {
         for (int i = 0; i < menuTexts.size(); i++) {

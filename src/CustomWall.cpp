@@ -1,6 +1,3 @@
-//
-// Created by luk27 on 05.03.2023.
-//
 #include "../headers/CustomWall.hpp"
 
 void CustomWall::drawTo(sf::RenderWindow &window) {

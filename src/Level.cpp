@@ -1,6 +1,3 @@
-//
-// Created by luk27 on 05.03.2023.
-//
 #include "../headers/Level.hpp"
 
 void Level::die(sf::RenderWindow &window) {
@@ -12,6 +9,8 @@ void Level::die(sf::RenderWindow &window) {
     sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(210, 0, 0));
 
     sf::Clock clock;
+
+    player.die(window);
 
     nextLevel = "menu";
 
@@ -153,16 +152,27 @@ Level::Level(const std::string &path) {
 void Level::gameWin(sf::RenderWindow &window) {
     window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
 
-    std::string displayText = "You win! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
+    std::string time = std::to_string(levelClock.getElapsedTime().asSeconds());
+
+    std::string displayText = "You win! Score: " + std::to_string(score) + ", Time (s): " + time;
     sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(0, 155, 0));
 
-    sf::Clock clock;
+    std::ifstream f("res/scores.json");
+    json data = json::parse(f);
+    f.close();
 
+    data.push_back({{"time", time}, {"score", std::to_string(score)}, {"level", levelName}});
+
+    std::ofstream scores("res/scores.json");
+    scores << data;
+    scores.close();
+
+    sf::Clock clock;
     nextLevel = "menu";
 
     while(clock.getElapsedTime().asSeconds() < 3) {
         //using active waiting - could be potentially changed to a more elegant solution
-        //i.e using multiple threads
+        //i.e. using multiple threads
         window.clear(sf::Color::White);
         window.draw(text);
         sleep(sf::milliseconds(100));

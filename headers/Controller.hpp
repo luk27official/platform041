@@ -4,6 +4,7 @@
 
 #include "Level.hpp"
 #include "Menu.hpp"
+#include "Scores.hpp"
 #include "Constants.hpp"
 #include <memory>
 
@@ -21,6 +22,7 @@ class Controller {
 
     std::unique_ptr<Level> level = nullptr;
     Menu menu;
+    Scores scores;
 
     sf::Clock clock;
     float dt;

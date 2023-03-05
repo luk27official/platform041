@@ -1,6 +1,3 @@
-//
-// Created by luk27 on 05.03.2023.
-//
 #include "../headers/Controller.hpp"
 
 void Controller::main() {
@@ -25,6 +22,22 @@ void Controller::main() {
             menu.drawTo(window);
 
             menu.handleEvents(event, window, currentLevel);
+
+            window.display();
+        }
+
+        else if (currentLevel == "scores") {
+            if(level != nullptr) {
+                level = nullptr;
+            }
+
+            window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
+
+            window.clear(sf::Color::White);
+
+            scores.drawTo(window);
+
+            scores.handleEvents(event, window, currentLevel);
 
             window.display();
         }
