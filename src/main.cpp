@@ -1,4 +1,4 @@
-#include "Controller.hpp"
+#include "../headers/Controller.hpp"
 
 /*
 * @brief The main function and entrypoint to the program. Creates a new controller and runs it.

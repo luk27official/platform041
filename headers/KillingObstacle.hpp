@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 #include "CustomWall.hpp"
 
 /*
@@ -8,8 +8,5 @@
 */
 class KillingObstacle : public CustomWall {
 public:
-    KillingObstacle() {
-        type = WallType::KillingObstacle;
-        setFillColor(sf::Color::Red);
-    }
+    KillingObstacle();
 };

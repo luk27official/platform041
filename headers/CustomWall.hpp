@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 #include "WallType.hpp"
 
 /*
@@ -14,45 +14,38 @@ protected:
 public:
     WallType type;
 
+    CustomWall() = default;
+
+    CustomWall(const CustomWall&) = delete;
+    CustomWall& operator=(const CustomWall&) = delete;
+
     /*
     * @brief Draws the wall to the window
     */
-    void drawTo(sf::RenderWindow &window) {
-        window.draw(shape);
-    }
+    void drawTo(sf::RenderWindow &window);
 
     /*
     * @brief Returns the global bounds of the wall (used for collision detection)    
     */
-    sf::FloatRect getGlobalBounds() {
-        return shape.getGlobalBounds();
-    }
+    sf::FloatRect getGlobalBounds();
 
     /*
     * @brief Sets the position of the wall
     */
-    void setPos(const sf::Vector2f newPos) {
-        shape.setPosition(newPos);
-    }
+    void setPos(const sf::Vector2f newPos);
 
     /*
     * @brief Moves the wall by the given distance
     */
-    void setSize(const sf::Vector2f size) {
-        shape.setSize(size);
-    }
+    void setSize(const sf::Vector2f size);
 
     /*
     * @brief Returns the rectangular shape of the wall (for collision detection and drawing)
     */
-    sf::RectangleShape getShape() {
-        return shape;
-    }
+    sf::RectangleShape getShape();
 
     /*
     * @brief Sets the color of the wall. Used in case of a color change.
     */
-    void setFillColor(const sf::Color color) {
-        shape.setFillColor(color);
-    }
+    void setFillColor(const sf::Color color);
 };
