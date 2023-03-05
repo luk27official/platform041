@@ -35,7 +35,7 @@ public:
     /*
     * @brief Sets the position of the coin
     */
-    void setPos(sf::Vector2f newPos) {
+    void setPos(const sf::Vector2f newPos) {
         sprite.setPosition(newPos);
     }
 

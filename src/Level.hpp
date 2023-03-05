@@ -67,7 +67,7 @@ public:
     /**
      * @brief A method that parses the "ground" type of element from the json file
     */
-    void parseGround(json& data) {
+    void parseGround(const json& data) {
         float width = data["width"];
         float height = data["height"];
 
@@ -86,7 +86,7 @@ public:
     /**
      * @brief A method that parses the "wall", "killzone" and "finish" types of element from the json file
     */
-    void parseWall(json& data, WallType type) {
+    void parseWall(const json& data, const WallType type) {
         float width = data["width"];
         float height = data["height"];
 
@@ -119,7 +119,7 @@ public:
     /**
      * @brief A method that parses the "enemy" type of element from the json file
     */
-    void parseEnemy(json& data) {
+    void parseEnemy(const json& data) {
         //enemy size is determined by the texture size
         float x = data["x"];
         float y = data["y"];
@@ -138,7 +138,7 @@ public:
     /**
      * @brief A method that parses the "coin" type of element from the json file
     */
-    void parseCoin(json& data) {
+    void parseCoin(const json& data) {
         float x = data["x"];
         float y = data["y"];
 
@@ -151,7 +151,7 @@ public:
     /**
      * @brief A method that parses the json file, calls the appropriate methods for each element
     */
-    void parseJson(std::string& path) {
+    void parseJson(const std::string& path) {
         std::string actualPath = "res/" + path + ".json";
 
         std::ifstream f(actualPath);
@@ -182,7 +182,7 @@ public:
     /*
     * @brief A constructor that loads the font and calls the parseJson method
     */
-    Level(std::string& path) {
+    Level(const std::string& path) {
         //here we could possibly do something else when the font fails to load, but it does not really affect the functionality of the game
         //(the game will still run, but the menu text will not be displayed) 
         if (!font.loadFromFile("res/vermin_vibes.ttf"))
@@ -219,7 +219,7 @@ public:
     /*
     * @brief A method that is called when creating a new text object. Used for the score and the post-game stats
     */
-    sf::Text createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
+    sf::Text createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, const sf::Color color = sf::Color::Black) {
         sf::Text text;
         text.setFont(font);
         text.setString(displayText);
@@ -394,7 +394,7 @@ public:
     /*
     * @brief Handles the logic of the enemy collisions (works the same as the player collisions)
     */
-    void handleEnemyObstacleCollision(std::shared_ptr<Enemy> e, float dt) {
+    void handleEnemyObstacleCollision(const std::shared_ptr<Enemy>& e, float dt) {
         // bottom collision
         bool colliding = false;
         for (int i = 0; i < obstacleVec.size(); i++) {
@@ -590,7 +590,7 @@ public:
     /*
     * @brief Handles the events of the game
     */
-    std::string handleEvents(sf::Event& event, sf::Window& window, std::string& level) {
+    std::string handleEvents(sf::Event& event, sf::Window& window, const std::string& level) {
         nextLevel = level;
         while (window.pollEvent(event)) {
             switch (event.type) {

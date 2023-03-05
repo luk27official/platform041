@@ -43,14 +43,14 @@ public:
     /*
     * @brief Sets the position of the bullet
     */
-    void setPos(sf::Vector2f newPos) {
+    void setPos(const sf::Vector2f newPos) {
         shape.setPosition(newPos);
     }
 
     /*
     * @brief Moves the bullet by the given distance
     */
-    void move(sf::Vector2f distance) {
+    void move(const sf::Vector2f distance) {
         shape.move(distance);
     }
 
@@ -71,7 +71,7 @@ public:
     /*
     * @brief Returns true, if the bullet is colliding with the given enemy
     */
-    bool isCollidingWithEnemy(std::shared_ptr<Enemy> enemy) {
+    bool isCollidingWithEnemy(const std::shared_ptr<Enemy>& enemy) {
         if (shape.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
             return true;
         }
@@ -81,7 +81,7 @@ public:
     /*
     * @brief Returns true, if the bullet is colliding with the given obstacle
     */
-    bool isCollidingWithObstacle(sf::RectangleShape& rect) {
+    bool isCollidingWithObstacle(const sf::RectangleShape& rect) {
         if (shape.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             return true;
         }

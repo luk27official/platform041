@@ -47,14 +47,14 @@ public:
     /*
     * @brief Moves the player by the given distance
     */
-    void move(sf::Vector2f distance) {
+    void move(const sf::Vector2f distance) {
         sprite.move(distance);
     }
  
     /*
     * @brief Sets the position of the player
     */
-    void setPos(sf::Vector2f newPos) {
+    void setPos(const sf::Vector2f newPos) {
         sprite.setPosition(newPos);
     }
 
@@ -110,7 +110,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given coin
     */
-    bool isCollidingWithCoin(std::shared_ptr<Coin> coin) {
+    bool isCollidingWithCoin(const std::shared_ptr<Coin>& coin) {
         if (sprite.getGlobalBounds().intersects(coin->getGlobalBounds())) {
             return true;
         }
@@ -120,7 +120,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given obstacle on the left side. For more reference see Enemy.leftObstacleCollision()
     */
-    bool leftObstacleCollision(sf::RectangleShape& rect) {
+    bool leftObstacleCollision(const sf::RectangleShape& rect) {
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
         }
@@ -136,7 +136,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given obstacle on the right side. For more reference see Enemy.leftObstacleCollision()
     */
-    bool rightObstacleCollision(sf::RectangleShape& rect) {
+    bool rightObstacleCollision(const sf::RectangleShape& rect) {
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
         }
@@ -152,7 +152,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given obstacle on the bottom side. For more reference see Enemy.leftObstacleCollision()
     */
-    bool bottomObstacleCollision(sf::RectangleShape& rect) {
+    bool bottomObstacleCollision(const sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + sprite.getGlobalBounds().height - 1 < rect.getPosition().y) {
                 return true;
@@ -164,7 +164,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given obstacle on the top side. For more reference see Enemy.leftObstacleCollision()
     */
-    bool topObstacleCollision(sf::RectangleShape& rect) {
+    bool topObstacleCollision(const sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + 1 > rect.getPosition().y + rect.getGlobalBounds().height) {
                 return true;
@@ -176,7 +176,7 @@ public:
     /*
     * @brief Returns true if the player is colliding with the given enemy
     */
-    bool isCollidingWithEnemy(std::shared_ptr<Enemy> enemy) {
+    bool isCollidingWithEnemy(const std::shared_ptr<Enemy>& enemy) {
         if (sprite.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
             return true;
         }

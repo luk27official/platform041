@@ -28,7 +28,7 @@ public:
     /*
     * @brief Creates a text object with the given size, x, y and color; adds it to the menuTexts vector and draws it to the window
     */
-    void createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, sf::Color color = sf::Color::Black) {
+    void createText(sf::RenderWindow &window, const std::string& displayText, int size, int x, int y, const sf::Color color = sf::Color::Black) {
         sf::Text text;
         text.setFont(font);
         text.setString(displayText);

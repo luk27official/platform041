@@ -41,14 +41,14 @@ public:
     /*
     * @brief Moves the enemy by the given distance
     */
-    void move(sf::Vector2f distance) {
+    void move(const sf::Vector2f distance) {
         sprite.move(distance);
     }
  
     /*
     * @brief Sets the position of the enemy
     */
-    void setPos(sf::Vector2f newPos) {
+    void setPos(const sf::Vector2f newPos) {
         sprite.setPosition(newPos);
     }
  
@@ -76,7 +76,7 @@ public:
     /*
     * @brief Checks for collision with the given rectangle on the left side. Returns true if there is a collision.
     */
-    bool leftObstacleCollision(sf::RectangleShape& rect) {
+    bool leftObstacleCollision(const sf::RectangleShape& rect) {
         //if the enemy is colliding with the bottom or top of the rectangle, it is not colliding with the left side 
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
@@ -94,7 +94,7 @@ public:
     /*
     * @brief Checks for collision with the given rectangle on the right side. Returns true if there is a collision. To see more about the collision detection, see leftObstacleCollision().
     */
-    bool rightObstacleCollision(sf::RectangleShape& rect) {
+    bool rightObstacleCollision(const sf::RectangleShape& rect) {
         if(bottomObstacleCollision(rect) || topObstacleCollision(rect)) {
             return false;
         }
@@ -110,7 +110,7 @@ public:
     /*
     * @brief Checks for collision with the given rectangle on the bottom side. Returns true if there is a collision. To see more about the collision detection, see leftObstacleCollision().
     */
-    bool bottomObstacleCollision(sf::RectangleShape& rect) {
+    bool bottomObstacleCollision(const sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + sprite.getGlobalBounds().height - 1 < rect.getPosition().y) {
                 return true;
@@ -122,7 +122,7 @@ public:
     /*
     * @brief Checks for collision with the given rectangle on the top side. Returns true if there is a collision. To see more about the collision detection, see leftObstacleCollision().
     */
-    bool topObstacleCollision(sf::RectangleShape& rect) {
+    bool topObstacleCollision(const sf::RectangleShape& rect) {
         if (sprite.getGlobalBounds().intersects(rect.getGlobalBounds())) {
             if (sprite.getPosition().y + 1 > rect.getPosition().y + rect.getGlobalBounds().height) {
                 return true;

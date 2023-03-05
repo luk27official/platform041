@@ -31,14 +31,14 @@ public:
     /*
     * @brief Sets the position of the wall
     */
-    void setPos(sf::Vector2f newPos) {
+    void setPos(const sf::Vector2f newPos) {
         shape.setPosition(newPos);
     }
 
     /*
     * @brief Moves the wall by the given distance
     */
-    void setSize(sf::Vector2f size) {
+    void setSize(const sf::Vector2f size) {
         shape.setSize(size);
     }
 
