@@ -6,6 +6,26 @@
 void Level::die(sf::RenderWindow &window) {
     score = 0;
 
+    window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
+
+    std::string displayText = "You lost! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
+    sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(210, 0, 0));
+
+    sf::Clock clock;
+
+    nextLevel = "menu";
+
+    while(clock.getElapsedTime().asSeconds() < 2) {
+        //using active waiting - could be potentially changed to a more elegant solution
+        //i.e. using multiple threads
+        window.clear(sf::Color::White);
+        window.draw(text);
+        sleep(sf::milliseconds(100));
+        window.display();
+    }
+
+    /*
+     * In case we do not want to return to menu.
     for(int i = 0; i < enemyVec.size(); i++) {
         enemyVec.at(i)->isAlive = true;
     }
@@ -15,6 +35,7 @@ void Level::die(sf::RenderWindow &window) {
     }
 
     player.die(window);
+    */
 }
 
 void Level::parseGround(const json &data) {
@@ -91,6 +112,7 @@ void Level::parseCoin(const json &data) {
 
 void Level::parseJson(const std::string &path) {
     std::string actualPath = "res/" + path + ".json";
+    levelName = path;
 
     std::ifstream f(actualPath);
     json data = json::parse(f);
@@ -482,7 +504,7 @@ void Level::drawTo(sf::RenderWindow &window) {
 }
 
 std::string Level::handleEvents(sf::Event &event, sf::Window &window, const std::string &level) {
-    nextLevel = level;
+    //nextLevel = level;
     while (window.pollEvent(event)) {
         switch (event.type) {
             case sf::Event::Closed: {

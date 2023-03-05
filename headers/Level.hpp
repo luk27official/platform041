@@ -44,6 +44,7 @@ class Level {
 
     sf::Font font;
 
+    std::string levelName;
     std::string nextLevel;
 
 public:
