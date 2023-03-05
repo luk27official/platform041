@@ -39,22 +39,27 @@ void Scores::drawTo(sf::RenderWindow &window) {
 
         std::sort(data.begin(), data.end(), [](const json &a, const json &b){return a["score"] > b["score"];});
         int startingY = 220;
+        size_t counter = 0;
 
         for(auto& row : data) {
-            std::string e = row["level"];
-            //remove the quotes from the string
-            e.erase(std::remove_if(e.begin(), e.end(), [](unsigned char x) { return x == '\"' || std::isalpha(x); }), e.end());
-            createText(window, e, 40, -200, startingY);
+            if(counter > 4) {
+                break;
+            }
+            std::string level = row["level"];
+            //remove the quotes + all letters from the string, leave just the numbers
+            level.erase(std::remove_if(level.begin(), level.end(), [](unsigned char x) { return x == '\"' || std::isalpha(x); }), level.end());
+            createText(window, level, 40, -200, startingY);
 
-            std::string e2 = row["score"];
-            e2.erase(std::remove_if(e2.begin(), e2.end(), [](unsigned char x) { return x == '\"'; }), e2.end());
-            createText(window, e2, 40, 0, startingY);
+            std::string score = row["score"];
+            score.erase(std::remove_if(score.begin(), score.end(), [](unsigned char x) { return x == '\"'; }), score.end());
+            createText(window, score, 40, 0, startingY);
 
-            std::string e3 = row["time"];
-            e3.erase(std::remove_if(e3.begin(), e3.end(), [](unsigned char x) { return x == '\"'; }), e3.end());
-            createText(window, e3, 40, 200, startingY);
+            std::string time = row["time"];
+            time.erase(std::remove_if(time.begin(), time.end(), [](unsigned char x) { return x == '\"'; }), time.end());
+            createText(window, time, 40, 200, startingY);
 
             startingY += 50;
+            ++counter;
         }
     }
     else {
