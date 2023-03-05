@@ -2,7 +2,7 @@
 
 ## User documentation
 
-At first, the user either has to build the app themselves or download the prebuilt executable. After that (see the source root README for build, if needed), the game is ready for playing. After running the executable, a window shows up. The game starts in a main menu. The user may choose from the available levels by using the arrow keys and spacebar/return key for selecting.
+At first, the user either has to build the app themselves or download the prebuilt executable. After that (see the source root README for build, if needed), the game is ready for playing. After running the executable, a window shows up. The game starts in a main menu. The user may choose from the available levels by using the arrow keys and spacebar/return key for selecting. The user may select the scores tab as well, which shows the top scores.
 
 <img src="images/menu.png" />
 
@@ -10,13 +10,17 @@ After selecting the level, menu disappears and the level starts. The user contro
 
 <img src="images/level1_start.png" />
 
-The goal of each level is to get to the finish area (in current version marked by the cyan color) by avoiding enemies and killing obstacles (red ones). It is possible, but not required to kill the enemies. It is also possible to collect the level's collectibles for better score. Each level has a timer which gets started the second the player chooses a level from the main menu. By pressing the escape key, the user may return back to the menu.
+The goal of each level is to get to the finish area (in current version marked by the cyan color) by avoiding enemies and killing obstacles (red ones). It is possible, but not required to kill the enemies. It is also possible to collect the level's collectibles for better score. Each level has a timer which gets started the second the player chooses a level from the main menu. By pressing the escape key, the user may return back to the menu. When the player dies, they are returned to the main menu as well.
 
 <img src="images/level1_end.png" />
 
 After completing the level, a final screen is shown with the player's score and time. After a few seconds, the player automatically returns back to the main menu.
 
 <img src="images/level1_score.png" />
+
+The user may also view their stats when selecting the Scores tab in the main menu. The final result is sorted by the top scores achieved. The user has to press either Escape, Space or Enter key to get back to the main menu.
+
+<img src="images/scores.png" />
 
 ## Programming documentation
 
@@ -57,11 +61,21 @@ This JSON object creates a walkable enemy with the gravity of 800 and speed of 1
 
 There are more types which may be parsed by the program such as "finish", "coin" or "killzone". For explicit parameters of those types refer to the `Level` class. This format allows us to add new types of obstacles/enemies pretty easily. The only requirement is to add the required methods for parsing the JSON data to the `Level` class and make sure that everything is drawn to the screen properly. The parsing methods create instances of the corresponding classes such as `ClassicWall`, `Finish`, `Enemy` etc.
 
+When the player wins the game, the file `res/scores.json` is updated with the winning data. The JSON is an array containing objects that look like this:
+```json
+{
+    "level": "level1",
+    "score": "2",
+    "time": "20.130440"
+}
+```
+
+The `Scores` class contains the logic for viewing the top scores. Currently, the class loads the saved scores from `res/scores.json`. Then, the class sorts the data by `score` attribute and shows them on the screen.
+
 The last class to mention is the `Player` class. It contains needed methods for detecting various collisions. The `Enemy` class is similar to this one.
 
 There are some extensions which could be added to the game:
 - Overall game statistics
-- Level statistics
 - More levels
 - More enemies (shooting ones, standing ones etc.)
 - More guns, collectibles

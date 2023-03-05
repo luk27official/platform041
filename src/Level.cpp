@@ -1,12 +1,12 @@
 #include "../headers/Level.hpp"
 
 void Level::die(sf::RenderWindow &window) {
-    score = 0;
-
     window.setView(sf::View(sf::Vector2f(0, Constants::get_window_height() / 2.0), sf::Vector2f(Constants::get_window_width(), Constants::get_window_height())));
 
     std::string displayText = "You lost! Score: " + std::to_string(score) + ", Time (s): " + std::to_string(levelClock.getElapsedTime().asSeconds());
     sf::Text text = createText(window, displayText, 50, 0, 300, sf::Color(210, 0, 0));
+
+    score = 0;
 
     sf::Clock clock;
 
