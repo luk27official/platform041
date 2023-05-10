@@ -73,6 +73,9 @@ void Level::parseWall(const json &data, const WallType type) {
         case WallType::Finish:
             obstacle = std::make_unique<Finish>();
             break;
+        case WallType::GoldenWall:
+            obstacle = std::make_unique<GoldenWallAdapter>();
+            break;
         default:
             break;
     }
@@ -129,6 +132,8 @@ void Level::parseJson(const std::string &path) {
             parseWall(element, WallType::KillingObstacle);
         } else if(e == "finish") {
             parseWall(element, WallType::Finish);
+        } else if(e == "golden") {
+            parseWall(element, WallType::GoldenWall);
         } else if(e == "coin") {
             parseCoin(element);
         } else if(e == "enemy") {
@@ -203,6 +208,7 @@ void Level::handlePlayerBottomObstacleCollision(sf::RenderWindow &window, float 
         if (player.bottomObstacleCollision(o)) {
             switch(obstacleVec.at(i)->type) {
                 case WallType::ClassicWall:
+                case WallType::GoldenWall:
                     colliding = true;
                     break;
                 case WallType::KillingObstacle:
@@ -235,6 +241,7 @@ void Level::handlePlayerRightObstacleCollision(sf::RenderWindow &window, float d
             if (player.rightObstacleCollision(o)) {
                 switch(obstacleVec.at(i)->type) {
                     case WallType::ClassicWall:
+                    case WallType::GoldenWall:
                         colliding = true;
                         break;
                     case WallType::KillingObstacle:
@@ -265,6 +272,7 @@ void Level::handlePlayerLeftObstacleCollision(sf::RenderWindow &window, float dt
             if (player.leftObstacleCollision(o)) {
                 switch(obstacleVec.at(i)->type) {
                     case WallType::ClassicWall:
+                    case WallType::GoldenWall:
                         colliding = true;
                         break;
                     case WallType::KillingObstacle:
@@ -292,6 +300,7 @@ void Level::handlePlayerTopObstacleCollision(sf::RenderWindow &window, float dt)
             if (player.topObstacleCollision(o)) {
                 switch(obstacleVec.at(i)->type) {
                     case WallType::ClassicWall:
+                    case WallType::GoldenWall:
                         colliding = true;
                         break;
                     case WallType::KillingObstacle:

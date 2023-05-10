@@ -1,25 +1,24 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "CustomWall.hpp"
+#include "GoldenWall.hpp"
 #include "WallType.hpp"
 
 /*
-* @brief A class that represents a wall. Meant to be drawn to the screen. This class is meant to be inherited from. It is not meant to be used directly, but rather as a base class for other walls.
+* @brief An adapter for the GoldenWall class that represents a golden wall,
+* but is incompatible with the CustomWall interface as we need to store additional
+* information about the x,y positions separately and the rectangle shape has a different name.
+* CustomWall is the target interface.
+* GoldenWall is the adaptee.
+* GoldenWallAdapter is the adapter.
+* This is an example of the class adapter pattern.
 */
-class CustomWall {
-protected:
-    sf::RectangleShape shape;
-    sf::Texture txt;
-
+class GoldenWallAdapter : public CustomWall, private GoldenWall {
 public:
-    WallType type;
+    GoldenWallAdapter();
 
-    CustomWall() = default;
-
-    CustomWall(const CustomWall&) = delete;
-    CustomWall& operator=(const CustomWall&) = delete;
-
-    /*
+     /*
     * @brief Draws the wall to the window
     */
     virtual void drawTo(sf::RenderWindow &window);

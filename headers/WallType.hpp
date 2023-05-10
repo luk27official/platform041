@@ -6,5 +6,6 @@
 enum class WallType {
     ClassicWall,
     KillingObstacle,
-    Finish
+    Finish,
+    GoldenWall
 };

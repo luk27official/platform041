@@ -15,6 +15,7 @@ using json = nlohmann::json;
 #include "KillingObstacle.hpp"
 #include "Direction.hpp"
 #include "Bullet.hpp"
+#include "GoldenWallAdapter.hpp"
 
 #include <vector>
 #include <memory>
