@@ -9,7 +9,6 @@
 class CustomWall {
 protected:
     sf::RectangleShape shape;
-    sf::Texture txt;
 
 public:
     WallType type;
