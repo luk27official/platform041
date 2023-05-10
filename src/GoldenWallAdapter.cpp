@@ -19,6 +19,7 @@ void GoldenWallAdapter::setPos(const sf::Vector2f newPos) {
     }
 
     //we have to update the x and y values of the wall as well
+    //so we directly call the GoldenWall inherited methods
     this->setX(newPos.x);
     this->setY(newPos.y);
 
